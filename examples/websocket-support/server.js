@@ -159,7 +159,36 @@ function decodeMessage (data) {
     var output = "";
 
     if(data[0] != 129) {
-      console.log("not a data frame - skipping opcode 0x" + data[0] & 15);
+      switch(data[0] & 15) {
+        case 0:
+          console.log("continuation frame - not supported yet");
+          break;
+/*
+        case 1:
+          console.log("Text frame");
+        break;
+*/
+        case 2:
+          console.log("binary frame - not supported yet");
+          break;
+
+        case 8:
+          console.log("connection close frame - not supported yet");
+          break;
+
+        case 9:
+          console.log("connection close frame - not supported yet");
+          break;
+
+        case 10:
+          console.log("connection close frame - not supported yet");
+          break;
+
+        default:
+          console.log("unindetified frame - not supported yet");
+          break;
+      }
+      console.log("not a data frame - skipped opcode 0x" + data[0] & 15);
       console.log("skipped message:", data);
     }
     else {
