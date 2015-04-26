@@ -14,12 +14,11 @@
         console.log("websocket opened", ws);
         document.getElementById('pagedata').innerHTML = "websocket connected";
 
-        // Send the msg object as a JSON-formatted string.
-    
+        // Send a control message as a JSON-formatted string.
         var msg = {
           message: 1,
-          type: "request",
-          data: "¿hello world?"
+          username: "jvanhalen",
+          password: "¿hello world?"
         };
 
         ws.send(JSON.stringify(msg));
