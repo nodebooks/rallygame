@@ -18,7 +18,7 @@ app.get('/', function(request, response) {
 var server = http.createServer(app).listen(port);
 
 server.on('connection', function(socket) {
-  console.log("a new connection", socket);
+  console.log("a new HTTP connection");
 });
 
 server.on('upgrade', function(request, socket, head){
