@@ -161,34 +161,34 @@ function decodeMessage (data) {
     if(data[0] != 129) {
       switch(data[0] & 15) {
         case 0:
-          console.log("continuation frame - not supported yet");
+          console.log("Continuation Frame - not supported yet");
           break;
 /*
         case 1:
-          console.log("Text frame");
+          console.log("Text Frame");
         break;
 */
         case 2:
-          console.log("binary frame - not supported yet");
+          console.log("Binary Frame - not supported yet");
           break;
 
         case 8:
-          console.log("connection close frame - not supported yet");
+          console.log("Connection Close Frame - not supported yet");
           break;
 
         case 9:
-          console.log("connection close frame - not supported yet");
+          console.log("Ping Frame - not supported yet");
           break;
 
         case 10:
-          console.log("connection close frame - not supported yet");
+          console.log("Pong Frame - not supported yet");
           break;
 
         default:
-          console.log("unindentified frame - not supported yet");
+          console.log("Unindentified Frame - not supported yet");
           break;
       }
-      console.log("not a data frame - skipped opcode " + (data[0] & 15).toString(16));
+      console.log("Not a Text Frame - skipped opcode 0x" + (data[0] & 15).toString(16));
       console.log("skipped message:", data);
     }
     else {
