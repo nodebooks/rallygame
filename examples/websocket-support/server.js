@@ -18,30 +18,7 @@ app.get('/', function(request, response) {
 var server = http.createServer(app).listen(port);
 
 server.on('connection', function(socket) {
-  console.log("some connection");
-});
-
-server.on('connect', function(request, socket, head) {
-  console.log("something connected");
-});
-
-server.on('request', function (request, response) { 
-  console.log("server request", request.headers);
-    //console.log("server request", request);
-    //console.log("server response", response);
-    response.writeContinue();
-
-  });
-
-server.on('checkContinue', function (request, response) { 
-  console.log("server checkContinue");
-  //console.log("server request", request);
-  //console.log("server response", response);
-  response.writeContinue();
-});
-
-server.on('close', function () { 
-  console.log("connection closed");
+  console.log("a new connection", socket);
 });
 
 server.on('upgrade', function(request, socket, head){
@@ -58,17 +35,17 @@ server.on('upgrade', function(request, socket, head){
 
   //console.log("magicstring:", magicstring);
 
+  // Send update response to the client
   socket.write("HTTP/1.1 101 Switching Protocols\r\n" +
-    "Upgrade: websocket\r\n" +
-    "Connection: Upgrade\r\n" +
-    "Sec-Websocket-Accept:" + accepthash + "\r\n" +
-    "Origin: http://"+host+"\r\n" +
-    "\r\n");
+               "Upgrade: websocket\r\n" +
+               "Connection: Upgrade\r\n" +
+               "Sec-Websocket-Accept:" + accepthash + "\r\n" +
+               "Origin: http://" + host + "\r\n" +
+               "\r\n");
 
   // Bind 'data' event so we can communicate with the socket
   socket.on('data', function(chunk) {
     /* Received data will be echoed back to sender */
-
     console.log("chunk length:", chunk.length);
     var respMessage = decodeMessage(chunk);
     respMessage.type = "response";
@@ -76,7 +53,7 @@ server.on('upgrade', function(request, socket, head){
   });
 
   socket.on('end', function() {
-      console.log("connection closed");
+    console.log("websocket connection closed");
   });
 });
 
@@ -84,14 +61,13 @@ server.on('upgrade', function(request, socket, head){
 server.listen(port, host);
 
 /* encode/decode websocket data */
-/* Good source: http://stackoverflow.com/questions/8125507/how-can-i-send-and-receive-websocket-messages-on-the-server-side 
-*/    
+/* Good source: http://stackoverflow.com/questions/8125507/how-can-i-send-and-receive-websocket-messages-on-the-server-side */
 
 function encodeMessage(data){
 
     var message = new Array();
 
-    /* Write header */
+    /* Set header to text data */
     message[0] = 129;
 
     var len = data.length;
@@ -177,7 +153,7 @@ function decodeMessage (data) {
           break;
 
         case 9:
-          console.log("Ping Frame - not supported yet");
+          console.log("Ping Frame - not supported, ping goes server -> client");
           break;
 
         case 10:
