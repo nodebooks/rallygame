@@ -185,10 +185,10 @@ function decodeMessage (data) {
           break;
 
         default:
-          console.log("unindetified frame - not supported yet");
+          console.log("unindentified frame - not supported yet");
           break;
       }
-      console.log("not a data frame - skipped opcode 0x" + data[0] & 15);
+      console.log("not a data frame - skipped opcode " + (data[0] & 15).toString(16));
       console.log("skipped message:", data);
     }
     else {
