@@ -1,0 +1,68 @@
+<html>
+  <head>
+    <title>Rallygame UML charts</title>
+    <meta charset="UTF-8">  
+    <script src="raphael-min.js"></script>
+    <script src="underscore-min.js"></script>
+    <script src="sequence-diagram-min.js"></script>
+    <script src="jquery-2.1.3.js"></script>
+
+    <script type="text/javascript">
+      function getUmlData() {
+        var jqxhr = $.get( "/getuml", function(data) {
+
+          var tmp = JSON.parse(data);
+          var umldata = "";
+
+          for (var x in tmp) {
+            umldata += tmp[x] + "\n";
+          }
+          console.log("umldata:", umldata);
+
+          var diagram = Diagram.parse(umldata);
+          diagram.drawSVG("diagram", {theme: 'simple'});
+        })
+          .done(function() {
+          })
+          .fail(function() {
+            alert( "error" );
+          })
+          .always(function() {
+          });
+      }
+
+      function startWebsocket() {
+        console.log("starting up websocket");
+
+        var ws = new WebSocket("ws://127.0.0.1:8000");
+
+        ws.onopen = function (event) {
+          console.log("websocket opened", ws);
+          document.getElementById('pagedata').innerHTML = "websocket connected";
+
+          // Send a control message as a JSON-formatted string.
+          var msg = {
+            message: 1,
+            username: "jvanhalen",
+            password: "¿hello world?"
+          };
+
+          ws.send(JSON.stringify(msg));
+        };
+
+        ws.onmessage = function (event) {
+          console.log("data:", JSON.parse(event.data));
+        };
+
+        ws.onclose = function() {
+          console.log("connection closed");
+        };
+      }
+    </script>
+  </head>
+  <body onload="startWebsocket()">
+    <p id="pagedata">Trying to connect websocket...</p>
+    <p><button id="getumldata" onclick="getUmlData()">Get UML data</button>
+    <div id="diagram"></div>
+  </body>
+</html>
