@@ -29,7 +29,7 @@ app.get('/getuml', function(request, response) {
 
 });
 
-var server = http.createServer(app).listen(port);
+var server = http.createServer(app);
 
 server.on('connection', function(socket) {
   umldata.push("Client-->Server: HTTP connection request");

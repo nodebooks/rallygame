@@ -2,21 +2,21 @@
   <head>
     <title>Rallygame UML charts</title>
     <meta charset="UTF-8">  
-    <script src="raphael-min.js"></script>
-    <script src="underscore-min.js"></script>
-    <script src="sequence-diagram-min.js"></script>
-    <script src="jquery-2.1.3.js"></script>
+    <script src="js/raphael-min.js"></script>
+    <script src="js/underscore-min.js"></script>
+    <script src="js/sequence-diagram-min.js"></script>
+    <script src="js/jquery-2.1.3.js"></script>
 
     <script type="text/javascript">
       function getUmlData() {
         var jqxhr = $.get( "/getuml", function(data) {
 
-          var tmp = JSON.parse(data);
-          var umldata = "";
-
+//          var tmp = JSON.parse(data);
+          var umldata = data;
+/*
           for (var x in tmp) {
             umldata += tmp[x] + "\n";
-          }
+          } */
           console.log("umldata:", umldata);
 
           document.getElementById('diagram').innerHTML = "";
@@ -36,7 +36,7 @@
       function startWebsocket() {
         console.log("starting up websocket");
 
-        var ws = new WebSocket("ws://127.0.0.1:8000");
+        var ws = new WebSocket("ws://127.0.0.1:8080");
 
         ws.onopen = function (event) {
           console.log("websocket opened", ws);

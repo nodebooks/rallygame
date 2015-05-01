@@ -15,7 +15,7 @@ app.get('/', function(request, response) {
   response.sendFile(__dirname + '/public/index.html');
 });
 
-var server = http.createServer(app).listen(port);
+var server = http.createServer(app);
 
 server.on('connection', function(socket) {
   console.log("a new HTTP connection");
@@ -65,7 +65,7 @@ server.listen(port, host);
 
 function encodeMessage(data){
 
-    var message = new Array();
+    var message = [];
 
     /* Set header to text data */
     message[0] = 129;
