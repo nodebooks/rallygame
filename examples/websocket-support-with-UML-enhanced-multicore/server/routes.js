@@ -4,7 +4,7 @@ var router = express.Router();
 var umldata = [];
 
 // middleware specific to this router
-router.use(function timeLog(req, res, next) {  
+router.use(function timeLog(req, res, next) { 
   req.tracedata = {
     //reqtime: Date.now(),  // Replace with high resolution timer
     reqtime: process.hrtime(),

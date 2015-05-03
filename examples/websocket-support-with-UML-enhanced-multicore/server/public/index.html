@@ -9,20 +9,22 @@
 
     <script type="text/javascript">
       function getUmlData() {
+        var time = Date.now();
         var jqxhr = $.get( "/getuml", function(data) {
+          var tmp = JSON.parse(data);
+          var umldata = [];
 
-//          var tmp = JSON.parse(data);
-          var umldata = data;
-/*
           for (var x in tmp) {
-            umldata += tmp[x] + "\n";
-          } */
-          console.log("umldata:", umldata);
+            umldata += "Client-->Server: " + tmp[x].r + "\n";
+            umldata += "Server-->Client: " + tmp[x].r + "\n";
+            umldata += "Note right of Client: " + tmp[x].tth + " ms\n";
+          }
 
           document.getElementById('diagram').innerHTML = "";
           
           var diagram = Diagram.parse(umldata);
           diagram.drawSVG("diagram", {theme: 'simple'});
+
         })
           .done(function() {
           })
