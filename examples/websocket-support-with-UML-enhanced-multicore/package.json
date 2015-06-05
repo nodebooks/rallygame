@@ -7,7 +7,7 @@
     "Node.js",
     "RallyGame",
     "nodebooks",
-    "webscoket"
+    "websocket"
   ],
   "author": {
     "name": "Jaakko Vanhala",
@@ -24,8 +24,7 @@
     "npm": ">= 1.0.0"
   },
   "dependencies": {
-    "express": "~4.10.7",
-    "cluster": "^0.7.7"
+    "express": "~4.10.7"
   },
   "devDependencies": {},
   "bundleDependencies": [],

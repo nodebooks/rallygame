@@ -29,7 +29,7 @@ module.exports = function(server, cluster) {
     });
 
     socket.on('end', function() {
-      console.log("websocket closed on core", cluster.worker.id);
+      //console.log("websocket closed on core", cluster.worker.id);
     });
   });
 }
