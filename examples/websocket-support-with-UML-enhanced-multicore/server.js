@@ -3,9 +3,6 @@
 var express = require('express');
 var http = require('http');
 var config = require('./server/config');
-var lobby = require('./game/lobby');
-
-var lob;
 
 var app = express();
 
@@ -25,10 +22,9 @@ if(cluster.isMaster) {
 
   console.log("Master here...");
 
-  lob = new lobby();
-
   var workers = [];
   var clients = [];
+  var clientid = 1;
 
   // Helper function for spawning worker at index 'i'.
   var spawn = function(i) {
@@ -64,49 +60,46 @@ if(cluster.isMaster) {
   Object.keys(cluster.workers).forEach(function(id) {
     cluster.workers[id].on('message', function(message, socket) {
       //console.log("master received", message, "from worker", cluster.workers[id].id);
-
+      
       switch(message) {
         case "websocket":
-          //console.log(socket);
+          //socket.connected = true;
+          socket.id = clientid++;
           socket.connected = true;
           clients.push(socket);
-          socket.write(encodeMessage("hello new client"));
-          /*
-          clients.forEach(function(ws){
-            if (ws.connected) {
-              var data = encodeMessage("a new client joined");
-              ws.write(data); 
-            }
-            else {
-              //console.log("websocket already destroyed, clear it from the array");
-            }
-          });
-    */
+
+          socket.write(encodeMessage("hello new client " + socket.id));
           
           // Handle socket events (just a dirty hack at this moment)
           socket.on('end', function() {
             this.connected = false;
-            //console.log("socket disconnected");
+            console.log("socket " + this.id + " disconnected");
           });
 
           socket.on('close', function() {
-            //console.log(this);
             this.connected = false;
-            //console.log("socket closed");
+            console.log("socket " + this.id + " closed");
           });
 
           socket.on('error', function() {
-            //console.log(this);
             this.connected = false;
-            //console.log("socket error");
+            console.log("socket " + this.id + " error");
           });
+
+          socket.on('data', function(chunk) {
+            console.log("got some data" + decodeMessage(chunk));
+
+            // Dirty hack to broadcast all the data received from clients
+            clients.forEach(function(ws) {
+              if(ws.connected) {
+                ws.write(chunk);
+              }
+            });
+          });
+
         break;
         default:
-          // Broadcast message
-          console.log("default branch reached");
-          clients.forEach(function(ws) {
-            ws.write(encodeMessage(message));
-          });
+          console.log("default branch reached for message:", message);
         break;
       }
     });
@@ -130,7 +123,8 @@ else {
     if(message.broadcast) {
       //console.log(self);
       socket.write("asdf");
-    }*/
+    }
+    */
   });
 }
 
@@ -172,4 +166,31 @@ function encodeMessage(data){
   }
 
   return buffer;
+}
+
+function decodeMessage (data) {
+  var output = "";
+
+  if(data[0] != 129) {
+    console.log("Not a Text Frame - skipped opcode 0x" + (data[0] & 15).toString(16));
+    //console.log("skipped message:", data);
+  }
+  else {
+    var datalength = data[1] & 127;
+    var indexFirstMask = 2;
+    if (datalength == 126) {
+      indexFirstMask = 4;
+    } 
+    else if (datalength == 127) {
+      indexFirstMask = 10;
+    }
+    var masks = data.slice(indexFirstMask,indexFirstMask + 4);
+    var i = indexFirstMask + 4;
+    var index = 0;
+    while (i < data.length) {
+      output += String.fromCharCode(data[i++] ^ masks[index++ % 4]);
+    }
+    console.log("payload:", output);
+  }
+  return output;
 }

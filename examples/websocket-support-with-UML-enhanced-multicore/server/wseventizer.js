@@ -3,8 +3,6 @@ var config = require('./config');
 
 function wseventizer(server, cluster) {
 
-  this.clients = [];
-
   server.on('connection', function(socket) {
     //console.log("client connected: core", cluster.worker.id);
   });
@@ -20,6 +18,7 @@ function wseventizer(server, cluster) {
     var magicstring = request.headers['sec-websocket-key'] + '258EAFA5-E914-47DA-95CA-C5AB0DC85B11';
     var accepthash = new Buffer(crypto.createHash('sha1').update(magicstring).digest('base64'));
 
+
     // Send update response to the client
     socket.write("HTTP/1.1 101 Switching Protocols\r\n" +
                  "Upgrade: websocket\r\n" +
@@ -28,22 +27,7 @@ function wseventizer(server, cluster) {
                  "Origin: http://" + config.serverip + "\r\n" +
                  "\r\n");
 
-    socket.connected = true;
-
-    // Pass connected socket to master process (for easy routing)
-    process.send("websocket", socket);
-
-    /*
-    // Bind 'data' event so we can communicate with the socket
-    socket.on('data', function(chunk) {
-      //console.log("websocket data:", decodeMessage(chunk), "on core", cluster.worker.id);
-      process.send("websocket", this);
-    });
-
-    socket.on('end', function() {
-      console.log("websocket closed on core", cluster.worker.id);
-    });
-    */
+    process.send('websocket', socket);
   });
 }
 

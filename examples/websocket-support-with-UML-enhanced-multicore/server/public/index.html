@@ -44,22 +44,30 @@
           console.log("websocket opened", ws);
           document.getElementById('pagedata').innerHTML = "websocket connected";
 
+          
           // Send a control message as a JSON-formatted string.
           var msg = {
-            message: 1,
+            message: 'login',
             username: "jvanhalen",
             password: "¿hello world?"
           };
 
           ws.send(JSON.stringify(msg));
+          
+          setTimeout(function() {
+            console.log("asdfasfa");
+            ws.send(JSON.stringify({text: "Hello server"}));
+          }, 1000);
+          
         };
 
         ws.onmessage = function (event) {
-          console.log("data:", JSON.parse(event.data));
+          console.log("data:", event.data);
         };
 
         ws.onclose = function() {
           console.log("connection closed");
+          document.getElementById('pagedata').innerHTML = "websocket disconnected";
         };
       }
     </script>
