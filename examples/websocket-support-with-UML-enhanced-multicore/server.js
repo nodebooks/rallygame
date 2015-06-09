@@ -60,47 +60,39 @@ if(cluster.isMaster) {
   Object.keys(cluster.workers).forEach(function(id) {
     cluster.workers[id].on('message', function(message, socket) {
       //console.log("master received", message, "from worker", cluster.workers[id].id);
-      
-      switch(message) {
-        case "websocket":
-          //socket.connected = true;
-          socket.id = clientid++;
-          socket.connected = true;
-          clients.push(socket);
+      if(message ==='websocket' && socket) {
+        socket.connected = true;
+        socket.clientid = clientid++;
+        clients.push(socket);
+        console.log("socket", socket.clientid, "connected");
 
-          socket.write(encodeMessage("hello new client " + socket.id));
-          
-          // Handle socket events (just a dirty hack at this moment)
-          socket.on('end', function() {
-            this.connected = false;
-            console.log("socket " + this.id + " disconnected");
+        socket.on('data', function(chunk) {
+          // Dirty hack to broadcast all the data received from clients
+          clients.forEach(function(websocket) {
+            if(websocket.connected) {
+              websocket.write(encodeMessage(decodeMessage(chunk)));
+            }
           });
+        });
 
-          socket.on('close', function() {
-            this.connected = false;
-            console.log("socket " + this.id + " closed");
-          });
+        // Handle socket events (just a dirty hack at this moment)
+        socket.on('end', function() {
+          this.connected = false;
+          console.log("socket " + this.clientid + " disconnected");
+        });
 
-          socket.on('error', function() {
-            this.connected = false;
-            console.log("socket " + this.id + " error");
-          });
+        socket.on('close', function() {
+          this.connected = false;
+          console.log("socket " + this.clientid + " closed");
+        });
 
-          socket.on('data', function(chunk) {
-            console.log("got some data" + decodeMessage(chunk));
-
-            // Dirty hack to broadcast all the data received from clients
-            clients.forEach(function(ws) {
-              if(ws.connected) {
-                ws.write(chunk);
-              }
-            });
-          });
-
-        break;
-        default:
-          console.log("default branch reached for message:", message);
-        break;
+        socket.on('error', function() {
+          this.connected = false;
+          console.log("socket " + this.clientid + " error");
+        });
+      }
+      else {
+        console.log("socket not set");
       }
     });
   });
@@ -118,13 +110,7 @@ else {
   app.use(express.static(__dirname + '/server/public'));
 
   process.on('message', function(message, socket) {
-    console.log(cluster.worker.id, "received message", message);
-    /*
-    if(message.broadcast) {
-      //console.log(self);
-      socket.write("asdf");
-    }
-    */
+    console.log("worker", cluster.worker.id, "received message", message);
   });
 }
 
@@ -190,7 +176,7 @@ function decodeMessage (data) {
     while (i < data.length) {
       output += String.fromCharCode(data[i++] ^ masks[index++ % 4]);
     }
-    console.log("payload:", output);
+    //console.log("payload:", output);
   }
   return output;
 }

@@ -27,6 +27,7 @@ function wseventizer(server, cluster) {
                  "Origin: http://" + config.serverip + "\r\n" +
                  "\r\n");
 
+    // Pass websocket to master
     process.send('websocket', socket);
   });
 }
