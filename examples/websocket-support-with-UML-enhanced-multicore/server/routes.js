@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var cluster = require('cluster');
 
 var umldata = [];
 
@@ -9,7 +10,7 @@ router.use(function timeLog(req, res, next) {
     //reqtime: Date.now(),  // Replace with high resolution timer
     reqtime: process.hrtime(),
     r: req.method + " " + req.url
-  }
+  };
   next();
 });
 

@@ -1,10 +1,16 @@
 var crypto = require('crypto');
 var config = require('./config');
 
-module.exports = function(server, cluster) {
+function wseventizer(server, cluster) {
+
+  this.clients = [];
 
   server.on('connection', function(socket) {
-      //console.log("client connected: core", cluster.worker.id);
+    //console.log("client connected: core", cluster.worker.id);
+  });
+
+  server.on('request', function(request, response) {
+    console.log("request URL:", request.originalUrl, "("+cluster.worker.id+")");
   });
 
   server.on('upgrade', function(request, socket, head){
@@ -22,17 +28,32 @@ module.exports = function(server, cluster) {
                  "Origin: http://" + config.serverip + "\r\n" +
                  "\r\n");
 
+    socket.connected = true;
+
+    // Pass connected socket to master process (for easy routing)
+    process.send("websocket", socket);
+
+    /*
     // Bind 'data' event so we can communicate with the socket
     socket.on('data', function(chunk) {
-    //console.log("websocket data:", decodeMessage(chunk), "on core", cluster.worker.id);
-    decodeMessage(chunk);
+      //console.log("websocket data:", decodeMessage(chunk), "on core", cluster.worker.id);
+      process.send("websocket", this);
     });
 
     socket.on('end', function() {
-      //console.log("websocket closed on core", cluster.worker.id);
+      console.log("websocket closed on core", cluster.worker.id);
     });
+    */
   });
 }
+
+wseventizer.prototype.broadcast = function(message) {
+  this.clients.forEach(function(socket) {
+    if(socket.connected) {
+      socket.send(decodeMessage(message));
+    }
+  });
+};
 
 /* encode/decode websocket data */
 /* Good source: http://stackoverflow.com/questions/8125507/how-can-i-send-and-receive-websocket-messages-on-the-server-side */
@@ -99,7 +120,9 @@ function decodeMessage (data) {
     while (i < data.length) {
       output += String.fromCharCode(data[i++] ^ masks[index++ % 4]);
     }
-    //console.log("payload:", output);
+    console.log("payload:", output);
   }
   return output;
 }
+
+module.exports = wseventizer;
