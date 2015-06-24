@@ -1,11 +1,16 @@
 "use strict";
 var WebSocket = require('ws');
 var cluster = require('cluster');
+var os = require('os');
 
 var sockets = [];
 
+var msgs = [JSON.stringify({ message: 'login', username: 'jaakko', password: 'test1234' }),
+            JSON.stringify({ message: 'chat', content: "Moro kaikille!" }),
+            JSON.stringify({ message: 'newplayer', username: 'jaakko', password: 'test1234' })];
+
 if(cluster.isMaster) {
-  for(var x=0; x<2; x++){
+  for(var x=0; x<4; x++){
     cluster.fork();
   }
 }
@@ -14,54 +19,59 @@ else {
     var ws = new WebSocket('ws://127.0.0.1:8080');
 
     ws.on('open', function open() {
-      ws.send(JSON.stringify({ message: 'newplayer', username: 'jaakko', password: 'test1234' }));
-      ws.send(JSON.stringify({ message: 'login', username: 'jaakko', password: 'test1234' }));
+//      ws.send(JSON.stringify({ message: 'newplayer', username: 'jaakko', password: 'test1234' }));
+      //ws.send(JSON.stringify({ message: 'login', username: 'jaakko', password: 'test1234' }));
       this.open = true;
       sockets.push(ws);
+      var tmo = setInterval(function() {
+        //ws.send(msgs[Math.round((Math.random())*2)]);
+        ws.send(msgs[1]);
+      }, 25);
+
     });
 
     ws.on('message', function(data, flags) {
       // flags.binary will be set if a binary data is received.
       // flags.masked will be set if the data was masked.
-      console.log("received %s", data);
+      //console.log("received %s", data);
       //console.log("flags:", flags);
+      if(JSON.parse(data).message == 'chat') {
+      }
+      else {
+        //console.log("some crap", data);
+      }
     });
 
     ws.on('end', function() {
       this.open = false;
-      sockets.splice(this.id, 1);
       this.end();
     });
 
     ws.on('error', function(err) {
       this.open = false;
-      sockets.splice(this.id, 1);
     });
 
-    if(sockets.length == 100) {
+    if(sockets.length == 300) {
       clearInterval(this);
-      setTimeout(crashboom, 1000);
     }
-  }, 50);
+  }, 200);
 }
 
-var count = 1;
+
+/*
 function crashboom() {
   var tmo = setInterval(function() {
     sockets.forEach(function(ws) {
-      if(ws.open == true) {
-        ws.send(JSON.stringify({ message: 'chat', content: "Moro kaikille!" }));
+      if(ws.open === true) {
+        //console.log(msgs[Math.round((Math.random())*2)]);
+        setTimeout(function() {
+          ws.send(msgs[Math.round((Math.random())*2)]);
+        }, 0);
       }
     });
-    /*
-    if(--count == 0) {
-      clearInterval(this);
-    }*/
-  }, 15);
+  }, 50);
 }
-
-
-
+*/
 
 /*var http = require('http');
 var cluster = require('cluster');

@@ -26,8 +26,8 @@ for (var i = 0; i < config.cpus; i++) {
 // Listen for worker events
 // and fork() a new process on exit
 cluster.on('exit', function(worker, code, signal) {
-  console.log('worker %d died (%s). restarting...',
-    worker.id, signal || code);  
+  console.log('worker %d died (%s). restarting...', 
+    worker.id, signal || code); 
   cluster.fork();
 });
 
@@ -41,13 +41,11 @@ cluster.on('fork', function(worker) {
 
 cluster.on('online', function(worker) {
   console.log("Worker %s is online", worker.id);
-  Object.keys(cluster.workers).forEach(function(id) {
-
-  });
 });
 
 cluster.on('listening', function(worker, address) {
-  console.log("worker%s is listening %s:%s", worker.id, address.address, address.port)
+  console.log("worker%s is listening %s:%s", 
+    worker.id, address.address, address.port);
 });
 
 Object.keys(cluster.workers).forEach(function(id) {
@@ -55,7 +53,7 @@ Object.keys(cluster.workers).forEach(function(id) {
     if(undefined !== message.message) {
       switch (message.message) {
         case 'chat':
-          //console.log(message);
+          //broadcast(message);
           break;
         default:
           console.log("default branch");
@@ -67,6 +65,12 @@ Object.keys(cluster.workers).forEach(function(id) {
     }
   });
 });
+
+function broadcast(message) {
+  for (var id in cluster.workers) {
+    cluster.workers[id].send(message);
+  }
+}
 
 var time = 0;
 var prevEventCount = 0;

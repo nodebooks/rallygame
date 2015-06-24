@@ -6,8 +6,6 @@ module.exports = {
   "process": {
     "title": "node_uworker" + cluster.worker.id
   },
-  
-  "cpus": os.cpus().length,
 
   "sockets": {
     "master": "/tmp/evmaster.sock",

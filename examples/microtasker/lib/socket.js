@@ -9,12 +9,10 @@ var eventizer = require('./eventizer');
 var connections = 0;
 var packets = 0;
 
-module.exports = function(server) {
-  // Later on, replace websocket with other sockets (UDP, TCP)
-  return Websocket(server);
-}
+var Websocket = function(server) {
 
-function Websocket(server) {
+  var _sockets = [];
+  var _socketId = 0;
 
   server.on('upgrade', function(request, socket, head){
 
@@ -33,9 +31,9 @@ function Websocket(server) {
     // Add some nice functions
     socket.encodeMessage = encodeMessage;
     socket.decodeMessage = decodeMessage;
+    addSocket(socket);
 
     socket.on('data', function(chunk) {
-
       // Terminate websocket protocol
       var msg = decodeMessage(chunk);
       // Pre-check if message is JSON string
@@ -54,14 +52,25 @@ function Websocket(server) {
     });
 
     socket.on('error', function() {
-      console.log("socket error");
-      socket.end()
+      console.log("socket %s error", socket.id);
+      removeSocket(socket);
     });
 
     socket.on('end', function() {
-      socket.end();
+      removeSocket(socket);
     });
   });
+
+  function addSocket(socket) {
+    socket.id = _socketId;
+    _socketId += 1;
+    _sockets[socket.id] = socket;
+  }
+
+  function removeSocket(socket) {
+    console.log("worker%s is removing socket %s", cluster.worker.id, socket.id);
+    delete _sockets[socket.id];
+  }
 
   function preCheckMessage(message) {
       try {
@@ -132,4 +141,18 @@ function Websocket(server) {
     }
     return output;
   }
-}
+
+  function broadcast(message) {
+    /*
+    for (var id in _sockets) {
+      _sockets[id].write(encodeMessage(JSON.stringify(message)));
+    }
+    */
+  }
+
+  return {
+    broadcast: broadcast
+  }
+};
+
+module.exports = Websocket;
