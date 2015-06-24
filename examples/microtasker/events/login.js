@@ -12,7 +12,7 @@ var schema = {
 
 module.exports = function (message, socket, callback) {
 
-  //console.log("worker%s executing login event (%s times)", cluster.worker.id);
+  //console.log("worker%s executing %s event", cluster.worker.id, message.message);
 
   if(check()) {
     executeEvent(message, socket, callback);

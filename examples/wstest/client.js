@@ -3,13 +3,14 @@ var WebSocket = require('ws');
 var cluster = require('cluster');
 var os = require('os');
 
-var openSockets = 300;  // How many sockets to open per core
+var openSockets = 350;  // How many sockets to open per core
 var sockets = [];
 
-var msgs = [JSON.stringify({ message: 'login', username: 'jaakko', password: 'test1234' }),
+var msgs = [JSON.stringify({ message: 'newplayer', username: 'jaakko', password: 'test1234' }),
+            JSON.stringify({ message: 'login', username: 'jaakko', password: 'test1234' }),
             JSON.stringify({ message: 'chat', content: "Moro kaikille!" }),
             JSON.stringify({ message: 'playerinput', username: 'jaakko', direction: 'general' }),
-            JSON.stringify({ message: 'newplayer', username: 'jaakko', password: 'test1234' })];
+            JSON.stringify({ message: 'example', username: 'jaakko', attr1: 'test', attr2: 1234 })];
 
 if(cluster.isMaster) {
   for(var x=0; x<3; x++){
@@ -28,7 +29,7 @@ else {
         sockets.push(ws);
         var tmo = setInterval(function() {
           //ws.send(msgs[Math.round(Math.random()*(msgs.length-1))]);
-          ws.send(msgs[1]);
+          ws.send(msgs[2]);
         }, 15);
 
       });
