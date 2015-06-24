@@ -14,6 +14,7 @@ else {
     var ws = new WebSocket('ws://127.0.0.1:8080');
 
     ws.on('open', function open() {
+      ws.send(JSON.stringify({ message: 'newplayer', username: 'jaakko', password: 'test1234' }));
       ws.send(JSON.stringify({ message: 'login', username: 'jaakko', password: 'test1234' }));
       this.open = true;
       sockets.push(ws);
