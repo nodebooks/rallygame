@@ -11,7 +11,7 @@ if(cluster.isMaster) {
 }
 else {
   setInterval(function() {
-    var ws = new WebSocket('ws://192.168.43.251:8080');
+    var ws = new WebSocket('ws://127.0.0.1:8080');
 
     ws.on('open', function open() {
       ws.send(JSON.stringify({ message: 'login', username: 'jaakko', password: 'test1234' }));

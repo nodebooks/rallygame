@@ -16,7 +16,7 @@ module.exports = {
 
   "http": {
     "port": 8080,
-    "address": '192.168.43.251'
+    "address": '127.0.0.1' //'192.168.43.251'
   },
 
   "eventizer": {
