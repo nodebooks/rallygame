@@ -28,8 +28,13 @@ var Eventizer = (function() {
   function generateEvent(message, socket) {
     // Compare user data to event schema
     if ('undefined' !== typeof message['message']) {
-      var ev = require('../events/'+message['message']);
-      ee.emit(message['message'], message, socket);
+      if(ee.listeners(message['message'])) {
+        var ev = require('../events/'+message['message']);
+        ee.emit(message['message'], message, socket);
+      }
+      else {
+        console.log("no listener for event '%s'", message['message']);
+      }
     }
     else {
       console.log("'message' does not exist", message);

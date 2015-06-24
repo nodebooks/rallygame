@@ -5,7 +5,7 @@ var cluster = require('cluster');
 var sockets = [];
 
 if(cluster.isMaster) {
-  for(var x=0; x<4; x++){
+  for(var x=0; x<2; x++){
     cluster.fork();
   }
 }
@@ -37,7 +37,7 @@ else {
       sockets.splice(this.id, 1);
     });
 
-    if(sockets.length == 300) {
+    if(sockets.length == 100) {
       clearInterval(this);
       setTimeout(crashboom, 1000);
     }

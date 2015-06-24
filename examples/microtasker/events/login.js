@@ -37,7 +37,7 @@ module.exports = function (message, socket, callback) {
     var retVal = false;
 
     Player.findOne({ "username" : message.username}, function(err, player) {
-      if(!err) {
+      if(!err && player) {
         retVal = player.isValidPassword(message.password);
         if(retVal) {
           //console.log("password match");
