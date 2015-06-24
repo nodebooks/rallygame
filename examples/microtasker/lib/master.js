@@ -53,6 +53,7 @@ Object.keys(cluster.workers).forEach(function(id) {
     if(undefined !== message.message) {
       switch (message.message) {
         case 'chat':
+          // Disable broadcast - eats too much CPU in testing
           //broadcast(message);
           break;
         default:

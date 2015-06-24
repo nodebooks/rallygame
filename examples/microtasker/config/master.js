@@ -6,7 +6,7 @@ module.exports = {
     "title": "node_umaster"
   },
 
-  "cpus": 7,//os.cpus().length,
+  "cpus": os.cpus().length,
   
   "sockets": {
     "master": "/tmp/evmaster.sock"

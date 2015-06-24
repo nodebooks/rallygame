@@ -7,7 +7,7 @@ var config = require('../config/worker');
 
 var Eventizer = (function() {
 
-  var _events = [];
+  var _events = require('../events/');
 
   // Push data from websocket
   function push(message, socket) {
@@ -27,13 +27,14 @@ var Eventizer = (function() {
 
   function generateEvent(message, socket) {
     // Compare user data to event schema
-    if ('undefined' !== typeof message['message']) {
-      if(ee.listeners(message['message'])) {
+    if (undefined !== typeof message['message']) {
+      if(undefined !== _events[message['message']]) {
         var ev = require('../events/'+message['message']);
         ee.emit(message['message'], message, socket);
       }
       else {
-        console.log("no listener for event '%s'", message['message']);
+        // Spam log
+        console.log("no listener file '../events/%s' for event '%s'", message['message'], message['message']);
       }
     }
     else {
@@ -49,8 +50,7 @@ var Eventizer = (function() {
 
   // Bind all events when this module is loaded (IIFE)
   (function bindEvents() {
-    var appEvents = require('../events/');
-    Object.keys(appEvents).forEach(function(event) {
+    Object.keys(_events).forEach(function(event) {
       ee.on(event.toString(), require('../events/'+event.toString()));
     });
   })();
