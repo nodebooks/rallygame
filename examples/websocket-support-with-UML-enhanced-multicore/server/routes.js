@@ -18,7 +18,7 @@ router.use(function timeLog(req, res, next) {
 router.get('/', function(req, res) {
   //console.log("GET /")
   res.sendFile(__dirname + '/public/index.html');
-  tagtrace(req);
+  //tagtrace(req);
 });
 
 // define the about route

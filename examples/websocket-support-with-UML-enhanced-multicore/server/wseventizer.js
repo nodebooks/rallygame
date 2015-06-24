@@ -8,7 +8,7 @@ function wseventizer(server, cluster) {
   });
 
   server.on('request', function(request, response) {
-    console.log("request URL:", request.originalUrl, "("+cluster.worker.id+")");
+    //console.log("request URL:", request.originalUrl, "("+cluster.worker.id+")");
   });
 
   server.on('upgrade', function(request, socket, head){

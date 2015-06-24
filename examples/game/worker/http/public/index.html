@@ -1,0 +1,40 @@
+<html>
+  <head>
+    <title>Rallygame UML charts</title>
+    <meta charset="UTF-8">
+    <script type="text/javascript">
+      function startWebsocket() {
+        var ws = new WebSocket("ws://127.0.0.1:8080");
+
+        ws.onopen = function (event) {
+          document.getElementById("pagedata").innerHTML = "websocket connected";
+
+          // Send a control message as a JSON-formatted string.
+          var msg = {
+            message: "login",
+            username: "jvanhalen",
+            password: "¿hello world?"
+          };
+
+          ws.send(JSON.stringify(msg));
+          
+          setTimeout(function() {
+            ws.send("Hello world!");
+          }, 1000);
+          
+        };
+
+        ws.onmessage = function (event) {
+          console.log("data:", event.data);
+        };
+
+        ws.onclose = function() {
+          document.getElementById("pagedata").innerHTML = "websocket disconnected";
+        };
+      }
+    </script>
+  </head>
+  <body onload="startWebsocket()">
+    <p id="pagedata">Trying to connect websocket...</p>
+  </body>
+</html>
