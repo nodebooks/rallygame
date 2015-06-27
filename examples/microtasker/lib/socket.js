@@ -68,7 +68,7 @@ var Websocket = function(server) {
   }
 
   function removeSocket(socket) {
-    console.log("worker%s is removing socket %s", cluster.worker.id, socket.id);
+    //console.log("worker%s is removing socket %s", cluster.worker.id, socket.id);
     delete _sockets[socket.id];
   }
 

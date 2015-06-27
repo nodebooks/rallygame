@@ -28,10 +28,16 @@ else {
         this.open = true;
         sockets.push(ws);
         var tmo = setInterval(function() {
-          //ws.send(msgs[Math.round(Math.random()*(msgs.length-1))]);
-          ws.send(msgs[2]);
+          if(ws.open === true) {
+            if(sockets[sockets.indexOf(ws)].readyState === sockets[0].OPEN) {
+              //ws.send(msgs[Math.round(Math.random()*(msgs.length-1))]);
+              ws.send(msgs[2]);
+            }
+          }
+          else {
+            sockets.splice(sockets.indexOf(ws), 1);
+          }
         }, 15);
-
       });
 
       ws.on('message', function(data, flags) {
@@ -49,13 +55,15 @@ else {
       ws.on('end', function() {
         this.open = false;
         this.end();
+        sockets.splice(sockets.indexOf(ws), 1);
       });
 
       ws.on('error', function(err) {
         this.open = false;
+        sockets.splice(sockets.indexOf(ws), 1);
       });
     }
-  }, 200);
+  }, 150);
 }
 
 

@@ -11,6 +11,7 @@ var net = require('net');
 process.title = config.process.title;
 
 var eventCount = 0;
+var eventCountMax = 0;
 
 // Setup cluster
 cluster.setupMaster({
@@ -76,8 +77,12 @@ function broadcast(message) {
 var time = 0;
 var prevEventCount = 0;
 
-var inter = setInterval(function() {
-  console.log("events per second: %s", (eventCount-prevEventCount));
+var interv = setInterval(function() {
+  var currentCount = (eventCount-prevEventCount);
+  if(currentCount > eventCountMax) {
+    eventCountMax = currentCount;
+  }
+  console.log("events per second: %s (max: %s)", currentCount, eventCountMax);
   prevEventCount = eventCount;
 }, 1000);
 
