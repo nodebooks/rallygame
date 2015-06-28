@@ -28,4 +28,11 @@ module.exports = function (message, socket, callback) {
     });
     return true;
   }
+
+  // Write your event code here
+  function executeEvent(message, socket, callback) {
+    //console.log("ev '%s' running...", message.message);
+    message.response = true;
+    socket.write(socket.encodeMessage(JSON.stringify(message)));
+  }
 }

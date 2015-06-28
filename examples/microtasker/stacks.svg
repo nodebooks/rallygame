@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" width="1200" height="132" onload="init(evt)" viewBox="0 0 1200 132" xmlns="http://www.w3.org/2000/svg" >
+    <defs >
+        <linearGradient id="background" y1="0" y2="1" x1="0" x2="0" >
+            <stop stop-color="#eeeeee" offset="5%" />
+            <stop stop-color="#eeeeb0" offset="95%" />
+        </linearGradient>
+    </defs>
+    <style type="text/css" >
+	rect[rx]:hover { stroke:black; stroke-width:1; }
+	text:hover { stroke:black; stroke-width:1; stroke-opacity:0.35; }
+    </style>
+    <script type="text/ecmascript" >
+	var details;
+	function init(evt) {
+		details = document.getElementById(&quot;details&quot;).
+		    firstChild;
+	}
+	function s(info) { details.nodeValue = info; }
+	function c() { details.nodeValue = &quot; &quot;; }
+    </script>
+    <rect x="0.0" y="0.0" width="1200.0" height="132.0" fill="url(#background)" />
+    <text text-anchor="middle" x="600" y="24" font-size="17" font-family="Verdana" fill="rgb(0, 0, 0)" >Flame Graph</text>
+    <text text-anchor="left" x="10" y="48" font-size="12" font-family="Verdana" fill="rgb(0, 0, 0)" >Function:</text>
+    <text text-anchor="left" x="70" y="48" font-size="12" font-family="Verdana" fill="rgb(0, 0, 0)" id="details" > </text>
+    <rect x="10.0" y="67.0" width="98.3" height="15.0" fill="rgb(255,255,164)" rx="2" ry="2" onmouseover="s(&quot;0x1 (1 samples, 8.33%)&quot;)" onmouseout="c()" />
+    <text text-anchor="left" x="13" y="77.5" font-size="12" font-family="Verdana" fill="rgb(0, 0, 0)" onmouseover="s(&quot;0x1 (1 samples, 8.33%)&quot;)" onmouseout="c()" >0x1</text>
+    <rect x="108.3" y="67.0" width="98.3" height="15.0" fill="rgb(255,255,164)" rx="2" ry="2" onmouseover="s(&quot;0x1222400 (1 samples, 8.33%)&quot;)" onmouseout="c()" />
+    <text text-anchor="left" x="111.33333333333333" y="77.5" font-size="12" font-family="Verdana" fill="rgb(0, 0, 0)" onmouseover="s(&quot;0x1222400 (1 samples, 8.33%)&quot;)" onmouseout="c()" >0x1222400</text>
+    <rect x="206.7" y="67.0" width="98.3" height="15.0" fill="rgb(255,255,164)" rx="2" ry="2" onmouseover="s(&quot;0x12cfa80 (1 samples, 8.33%)&quot;)" onmouseout="c()" />
+    <text text-anchor="left" x="209.66666666666666" y="77.5" font-size="12" font-family="Verdana" fill="rgb(0, 0, 0)" onmouseover="s(&quot;0x12cfa80 (1 samples, 8.33%)&quot;)" onmouseout="c()" >0x12cfa80</text>
+    <rect x="305.0" y="67.0" width="98.3" height="15.0" fill="rgb(255,255,164)" rx="2" ry="2" onmouseover="s(&quot;0x1867ee0 (1 samples, 8.33%)&quot;)" onmouseout="c()" />
+    <text text-anchor="left" x="308" y="77.5" font-size="12" font-family="Verdana" fill="rgb(0, 0, 0)" onmouseover="s(&quot;0x1867ee0 (1 samples, 8.33%)&quot;)" onmouseout="c()" >0x1867ee0</text>
+    <rect x="403.3" y="67.0" width="98.3" height="15.0" fill="rgb(255,255,164)" rx="2" ry="2" onmouseover="s(&quot;0x1868c08 (1 samples, 8.33%)&quot;)" onmouseout="c()" />
+    <text text-anchor="left" x="406.3333333333333" y="77.5" font-size="12" font-family="Verdana" fill="rgb(0, 0, 0)" onmouseover="s(&quot;0x1868c08 (1 samples, 8.33%)&quot;)" onmouseout="c()" >0x1868c08</text>
+    <rect x="501.7" y="67.0" width="196.7" height="15.0" fill="rgb(255,255,149)" rx="2" ry="2" onmouseover="s(&quot;0x2 (2 samples, 16.67%)&quot;)" onmouseout="c()" />
+    <text text-anchor="left" x="504.66666666666663" y="77.5" font-size="12" font-family="Verdana" fill="rgb(0, 0, 0)" onmouseover="s(&quot;0x2 (2 samples, 16.67%)&quot;)" onmouseout="c()" >0x2</text>
+    <rect x="698.3" y="67.0" width="98.3" height="15.0" fill="rgb(255,255,164)" rx="2" ry="2" onmouseover="s(&quot;0x49fbf4aa (1 samples, 8.33%)&quot;)" onmouseout="c()" />
+    <text text-anchor="left" x="701.3333333333333" y="77.5" font-size="12" font-family="Verdana" fill="rgb(0, 0, 0)" onmouseover="s(&quot;0x49fbf4aa (1 samples, 8.33%)&quot;)" onmouseout="c()" >0x49fbf4aa</text>
+    <rect x="796.7" y="67.0" width="98.3" height="15.0" fill="rgb(255,255,164)" rx="2" ry="2" onmouseover="s(&quot;0x50e020 (1 samples, 8.33%)&quot;)" onmouseout="c()" />
+    <text text-anchor="left" x="799.6666666666666" y="77.5" font-size="12" font-family="Verdana" fill="rgb(0, 0, 0)" onmouseover="s(&quot;0x50e020 (1 samples, 8.33%)&quot;)" onmouseout="c()" >0x50e020</text>
+    <rect x="895.0" y="67.0" width="98.3" height="15.0" fill="rgb(255,255,164)" rx="2" ry="2" onmouseover="s(&quot;0x5fbf6e70 (1 samples, 8.33%)&quot;)" onmouseout="c()" />
+    <text text-anchor="left" x="898" y="77.5" font-size="12" font-family="Verdana" fill="rgb(0, 0, 0)" onmouseover="s(&quot;0x5fbf6e70 (1 samples, 8.33%)&quot;)" onmouseout="c()" >0x5fbf6e70</text>
+    <rect x="993.3" y="67.0" width="98.3" height="15.0" fill="rgb(255,255,164)" rx="2" ry="2" onmouseover="s(&quot;0x5fbf73e0 (1 samples, 8.33%)&quot;)" onmouseout="c()" />
+    <text text-anchor="left" x="996.3333333333333" y="77.5" font-size="12" font-family="Verdana" fill="rgb(0, 0, 0)" onmouseover="s(&quot;0x5fbf73e0 (1 samples, 8.33%)&quot;)" onmouseout="c()" >0x5fbf73e0</text>
+    <rect x="1091.7" y="67.0" width="98.3" height="15.0" fill="rgb(255,255,164)" rx="2" ry="2" onmouseover="s(&quot;0x756c6359 (1 samples, 8.33%)&quot;)" onmouseout="c()" />
+    <text text-anchor="left" x="1094.6666666666665" y="77.5" font-size="12" font-family="Verdana" fill="rgb(0, 0, 0)" onmouseover="s(&quot;0x756c6359 (1 samples, 8.33%)&quot;)" onmouseout="c()" >0x756c6359</text>
+    <rect x="10.0" y="83.0" width="1180.0" height="15.0" fill="rgb(204,0,0)" rx="2" ry="2" onmouseover="s(&quot;all samples (12 samples, 100%)&quot;)" onmouseout="c()" />
+    <text text-anchor="left" x="13" y="93.5" font-size="12" font-family="Verdana" fill="rgb(0, 0, 0)" onmouseover="s(&quot;all samples (12 samples, 100%)&quot;)" onmouseout="c()" ></text>
+</svg>

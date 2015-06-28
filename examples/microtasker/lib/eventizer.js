@@ -29,12 +29,13 @@ var Eventizer = (function() {
     // Compare user data to event schema
     if (undefined !== typeof message['message']) {
       if(undefined !== _events[message['message']]) {
-        var ev = require('../events/'+message['message']);
+        var ev = require('../events/' + message['message']);
         ee.emit(message['message'], message, socket);
       }
       else {
         // Spam log
-        console.log("no listener file '../events/%s' for event '%s'", message['message'], message['message']);
+        var event = message['message'];
+        console.log("no listener file '../events/%s' for event '%s'", event, event);
       }
     }
     else {
@@ -52,6 +53,7 @@ var Eventizer = (function() {
   (function bindEvents() {
     Object.keys(_events).forEach(function(event) {
       ee.on(event.toString(), require('../events/'+event.toString()));
+      //ee.on(event.toString(), justTesting);
     });
   })();
 
@@ -88,6 +90,10 @@ var Eventizer = (function() {
     return buffer;
   }
 
+  function justTesting() {
+    var x = 1;
+    x++;
+  }
   return{
     push: push,
     pop: pop

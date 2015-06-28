@@ -2,7 +2,6 @@
 
 var cluster = require('cluster');
 
-
 // Message schema
 var schema = {
     message: String,
@@ -36,9 +35,9 @@ module.exports = function (message, socket, callback) {
     // Do some calculations here - currently just wait 0-1 ms before sending response
 
     setTimeout(function() {
-    // TODO: Sync players (run race on master process for easy routing?)
-    message.response = true;
-    socket.write(socket.encodeMessage(JSON.stringify(message)));
-    }, 0);
+      // TODO: Sync players (run race on master process for easy routing?)
+      message.response = true;
+      socket.write(socket.encodeMessage(JSON.stringify(message)));
+      }, 0);
   }
 };
