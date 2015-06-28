@@ -143,11 +143,11 @@ var Websocket = function(server) {
   }
 
   function broadcast(message) {
-    /*
+    
     for (var id in _sockets) {
       _sockets[id].write(encodeMessage(JSON.stringify(message)));
     }
-    */
+    
   }
 
   return {

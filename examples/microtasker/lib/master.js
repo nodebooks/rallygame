@@ -55,7 +55,7 @@ Object.keys(cluster.workers).forEach(function(id) {
       switch (message.message) {
         case 'chat':
           // Disable broadcast - eats too much CPU in testing
-          //broadcast(message);
+          broadcast(message);
           break;
         default:
           console.log("default branch");

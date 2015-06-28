@@ -1,21 +1,18 @@
 "use strict";
 
-//var cluster = require('cluster');
+var cluster = require('cluster');
 
-// Rememver to add your new events to ./index.js-file, e.g. exports = require('./example')
+// Remember to add your new events to ./index.js-file, e.g. exports = require('./example')
 // TODO: Message schema, keep it simple
-/*var schema = {
+var schema = {
     message: String,
     username: String,
     attr1: String,
     attr2: Number
   };
-*/
-// This is generic stuff, don't touce
+
+// This is generic stuff, don't touch
 module.exports = function (message, socket, callback) {
-  var x = 1;
-  x += 1;
-  /*
   //console.log("worker%s executing %s event", cluster.worker.id, message.message);
 
   if(check()) {
@@ -45,5 +42,4 @@ module.exports = function (message, socket, callback) {
     // Send response, sync players, broadcast or do some other things - but don't hassle
     socket.write(socket.encodeMessage(JSON.stringify(message)));
   }
-  */
 };
