@@ -33,13 +33,12 @@ module.exports = function (message, callback) {
   // Write your event code here
   function executeEvent(message, callback) {
     //console.log("ev '%s' running...", message.message);
-
-    var retVal = false;
-
     Player.findOne({ "username" : message.username}, function(err, player) {
+      var resp = false;
+
       if(!err && player) {
-        retVal = player.isValidPassword(message.password);
-        if(retVal) {
+        resp = player.isValidPassword(message.password);
+        if(resp) {
           //console.log("password match");
         }
         else {
@@ -49,7 +48,8 @@ module.exports = function (message, callback) {
       else {
         console.log("Players.findOne failed:", err);
       }
-      message.response = retVal;
+      message.response = resp;
+      message.reason = err;
       callback(message);
     });
   }

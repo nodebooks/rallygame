@@ -33,10 +33,10 @@ module.exports = function (message, callback) {
   // Write your event code here
   function executeEvent(message, callback) {
     //console.log("ev '%s' running...", message.message);
-    var resp = false;
     var player = new Player({ username: message.username, password: message.password });
 
     player.save(function (err, player) {
+      var resp = false;
       if(err) {
         //console.log("ev '%s' failed in user creation...", message.message);
         resp = false;
@@ -45,9 +45,9 @@ module.exports = function (message, callback) {
         console.log("ev '%s' user creation passed. New user '%s' created.", message.message, message.username);
         resp = true;
       }
+      message.response = resp;
+      message.reason = err;
+      callback(message);
     }); 
-
-    message.response = resp;
-    callback(message);
   }
 };
