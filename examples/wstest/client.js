@@ -17,7 +17,7 @@ var eventCount = 0;
 
 var msgs = [JSON.stringify({ message: 'newplayer', username: 'jaakko', password: 'test1234' }),
             JSON.stringify({ message: 'login', username: 'jaakko', password: 'test1234' }),
-            JSON.stringify({ message: 'chat', content: 'Moro!' }),
+            JSON.stringify({ message: 'chat', content: 'Hello world!' }),
             JSON.stringify({ message: 'playerinput', username: 'jaakko', direction: 'general' }),
             JSON.stringify({ message: 'example', username: 'jaakko', attr1: 'test', attr2: 1234 })];
 
