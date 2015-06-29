@@ -7,14 +7,16 @@ module.exports = {
     "title": "node_uworker" + cluster.worker.id
   },
 
-  "sockets": {
-    "master": "/tmp/evmaster.sock",
-    "worker": "/tmp/evworker" + cluster.worker.id + ".sock"
+  "socket": {
+    "opts": {
+      "allowHalfOpen": false,
+      
+    }
   },
 
   "http": {
     "port": 8080,
-    "address": '192.168.43.251'//'127.0.0.1' //'192.168.43.251'
+    "address": '127.0.0.1' //'192.168.43.251'
   },
 
   "eventizer": {

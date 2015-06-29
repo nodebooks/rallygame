@@ -50,7 +50,7 @@ module.exports = function (message, socket, callback) {
         console.log("Players.findOne failed:", err);
       }
       message.response = retVal;
-      socket.write(socket.encodeMessage(JSON.stringify(message)));
+      callback(message, socket);
     });
   }
 };

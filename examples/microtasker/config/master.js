@@ -6,11 +6,7 @@ module.exports = {
     "title": "node_umaster"
   },
 
-  "cpus": os.cpus().length,
-  
-  "sockets": {
-    "master": "/tmp/evmaster.sock"
-  },
+  "cpus": os.cpus().length-1,
 
   "worker": {
     "file": "./lib/worker.js"

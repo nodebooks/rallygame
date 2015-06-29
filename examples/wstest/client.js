@@ -4,9 +4,9 @@ var WebSocket = require('ws');
 var cluster = require('cluster');
 var os = require('os');
 
-var openSockets = 350;  // How many sockets to open per core
-
-var rtt = {};
+var openSocketsMax = 250;  // How many sockets to open per core
+var openSockets = 0;  // How many sockets open currently (per core)
+var eventCount = 0;
 
 var msgs = [JSON.stringify({ message: 'newplayer', username: 'jaakko', password: 'test1234' }),
             JSON.stringify({ message: 'login', username: 'jaakko', password: 'test1234' }),
@@ -17,10 +17,18 @@ var msgs = [JSON.stringify({ message: 'newplayer', username: 'jaakko', password:
 if(cluster.isMaster) {
 
   process.title = "node_tester_master";
-  for(var x=0; x<3; x++){
+  for(var x=0; x<1; x++){
     cluster.fork();
   }
-  //runTest();
+  runTest();
+  calculateEventReplies();
+  Object.keys(cluster.workers).forEach(function(id) {
+    cluster.workers[id].on('message', function(message, socket) {
+      if(message === 'reply') {
+        eventCount++;
+      }
+    });
+  });
 }
 else {
   process.title = "node_tester"+cluster.worker.id;
@@ -29,11 +37,11 @@ else {
 
 function runTest() {
   setInterval(function() {
-    if(openSockets > 0) {
-      var ws = new WebSocket('ws://192.168.43.251:8080');
+    if(openSocketsMax > openSockets) {
+      var ws = new WebSocket('ws://127.0.0.1:8080');
 
       ws.on('open', function () {
-        openSockets--;
+        openSockets++;
         ws.send(JSON.stringify({ message: 'newplayer', username: 'jaakko', password: 'test1234'}));
         //ws.send(JSON.stringify({ message: 'login', username: 'jaakko', password: 'test1234' }));
         this.open = true;
@@ -42,41 +50,45 @@ function runTest() {
             if(ws.readyState === ws.OPEN) {
               var msg = msgs[Math.round(Math.random()*(msgs.length-1))];
               //ws.send(msg);
-              ws.send((msgs[3]));
+              ws.send((msgs[4]));
             }
           }
-        }, 25);
+        }, 15);
       });
-
-      ws.on('message', function(data, flags) {
-        // flags.binary will be set if a binary data is received.
-        // flags.masked will be set if the data was masked.
-        //console.log("received %s", data);
-        //console.log("flags:", flags);
-        var obj = JSON.parse(data);
-        if(obj.rtt) {
-          rtt[obj.message] = process.hrtime(obj.rtt);
-        }
-      });
-
-      ws.on('end', function() {
+      ws.on('close', function() {
+        //console.log("socket close");
         this.open = false;
-        this.end();
-        openSockets++;
+        openSockets--;
       });
-
       ws.on('error', function(err) {
+        console.log("error", err);
         this.open = false;
         this.end();
       });
+      ws.on('message', function(message) {
+        if(undefined !== process.send) {
+          process.send('reply');
+        }
+        else {
+          eventCount++;
+        }
+      })
     }
-  }, 150);
+  }, 120);
 }
 
-function runRtt() {
-  var rttInterval = setInterval(function() {
-    for(var item in rtt) {
-      console.log(item + " " + (rtt[item][1]/1000/1000).toFixed(2) + " ms");
+function calculateEventReplies() {
+  var eventCountMax = 0;
+  var prevEventCount = 0;
+
+  var interv = setInterval(function() {
+    var currentCount = (eventCount-prevEventCount);
+    if(currentCount > eventCountMax) {
+      eventCountMax = currentCount;
     }
-  }, 5000);
+    console.log("events/sec: %s (max: %s). Sockets open %s/%s", 
+      currentCount, eventCountMax, openSockets, openSocketsMax);
+    prevEventCount = eventCount;
+  }, 1000);
 }
+

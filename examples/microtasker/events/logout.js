@@ -33,6 +33,6 @@ module.exports = function (message, socket, callback) {
   function executeEvent(message, socket, callback) {
     //console.log("ev '%s' running...", message.message);
     message.response = true;
-    socket.write(socket.encodeMessage(JSON.stringify(message)));
+    callback(message, socket);
   }
 }

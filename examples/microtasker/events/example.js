@@ -40,6 +40,6 @@ module.exports = function (message, socket, callback) {
     message.reason = "Bad things happened because...";
 
     // Send response, sync players, broadcast or do some other things - but don't hassle
-    socket.write(socket.encodeMessage(JSON.stringify(message)));
+    callback(message, socket);
   }
 };

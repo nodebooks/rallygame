@@ -37,7 +37,7 @@ module.exports = function (message, socket, callback) {
     setTimeout(function() {
       // TODO: Sync players (run race on master process for easy routing?)
       message.response = true;
-      socket.write(socket.encodeMessage(JSON.stringify(message)));
-      }, 0);
+      callback(message, socket);
+    }, 1);
   }
 };

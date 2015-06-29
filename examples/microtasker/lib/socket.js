@@ -28,40 +28,37 @@ var Websocket = function(server) {
                  "Origin: http://" + config.serverip + "\r\n" +
                  "\r\n");
 
-    // Add some nice functions
-    socket.encodeMessage = encodeMessage;
-    socket.decodeMessage = decodeMessage;
+    // Add some helper functions to socket
     addSocket(socket);
 
     socket.on('data', function(chunk) {
+      
       // Terminate websocket protocol
-      var msg = decodeMessage(chunk);
-      // Pre-check if message is JSON string
-      msg = preCheckMessage(msg);
+      var msg = receive(chunk);
 
       if(msg) {
         // Valid JSON received: pass data to upper layer
-        eventizer.push(msg, this);
+        eventizer.push(msg, this, eventCallback);
       }
       else {
         // Bogus data from client, close socket
-        socket.write(encodeMessage(JSON.stringify({message: "error", reason: "bogus data"})));
         socket.end();
       }
-      process.send('message');
     });
 
-    socket.on('error', function() {
-      console.log("socket %s error", socket.id);
+    socket.on('error', function(err) {
+      console.log("socket %s error %s", socket.id, err);
       removeSocket(socket);
     });
 
     socket.on('end', function() {
+      //console.log("socket %s died", socket.id);
       removeSocket(socket);
     });
   });
 
   function addSocket(socket) {
+    socket.encodeMessage = encodeMessage;
     socket.id = _socketId;
     _socketId += 1;
     _sockets[socket.id] = socket;
@@ -70,17 +67,6 @@ var Websocket = function(server) {
   function removeSocket(socket) {
     //console.log("worker%s is removing socket %s", cluster.worker.id, socket.id);
     delete _sockets[socket.id];
-  }
-
-  function preCheckMessage(message) {
-      try {
-        var object = JSON.parse(message);
-        //console.log("valid JSON", object);
-        return object;
-      }
-      catch(e) {
-        return undefined;
-      }
   }
 
   function encodeMessage (data){
@@ -142,13 +128,33 @@ var Websocket = function(server) {
     return output;
   }
 
+  function preCheckMessage(message) {
+      try {
+        var object = JSON.parse(message);
+        //console.log("valid JSON", object);
+        return object;
+      }
+      catch(e) {
+        return undefined;
+      }
+  }
+
+  function receive(message) {
+    return preCheckMessage(decodeMessage(message));
+  }
+
+  function eventCallback(message, socket) {
+    if(socket.writable) {
+      socket.write(encodeMessage(JSON.stringify(message)));
+    }
+  }
+
   function broadcast(message) {
-    
     for (var id in _sockets) {
       _sockets[id].write(encodeMessage(JSON.stringify(message)));
-    }
-    
+    } 
   }
+
 
   return {
     broadcast: broadcast

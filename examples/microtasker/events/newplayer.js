@@ -48,6 +48,6 @@ module.exports = function (message, socket, callback) {
     }); 
 
     message.response = resp;
-    socket.write(socket.encodeMessage(JSON.stringify(message)));
+    callback(message, socket);
   }
 };
