@@ -9,12 +9,12 @@ var schema = {
     direction: String
   };
 
-module.exports = function (message, socket, callback) {
+module.exports = function (message, callback) {
 
   //console.log("worker%s executing % event (%s times)", cluster.worker.id, message.message);
 
   if(check()) {
-    executeEvent(message, socket, callback);
+    executeEvent(message, callback);
   }
   else {
     console.log("ev '%s' failed", message.message);
@@ -30,14 +30,14 @@ module.exports = function (message, socket, callback) {
   }
 
   // Write your event code here
-  function executeEvent(message, socket, callback) {
+  function executeEvent(message, callback) {
     //console.log("ev '%s' running...", message.message);
     // Do some calculations here - currently just wait 0-1 ms before sending response
 
     setTimeout(function() {
       // TODO: Sync players (run race on master process for easy routing?)
       message.response = true;
-      callback(message, socket);
+      callback(message);
     }, 1);
   }
 };

@@ -4,22 +4,29 @@ var WebSocket = require('ws');
 var cluster = require('cluster');
 var os = require('os');
 
-var openSocketsMax = 250;  // How many sockets to open per core
+
+// Configurable options
+var messageInterval = 25;
+var openSocketInterval = 150;
+var openSocketsMax = 50;  // How many sockets to open per core
+var numProcesses = 1;
+
+
 var openSockets = 0;  // How many sockets open currently (per core)
 var eventCount = 0;
 
 var msgs = [JSON.stringify({ message: 'newplayer', username: 'jaakko', password: 'test1234' }),
             JSON.stringify({ message: 'login', username: 'jaakko', password: 'test1234' }),
-            JSON.stringify({ message: 'chat', content: 'Moro kaikille!' }),
+            JSON.stringify({ message: 'chat', content: 'Moro!' }),
             JSON.stringify({ message: 'playerinput', username: 'jaakko', direction: 'general' }),
             JSON.stringify({ message: 'example', username: 'jaakko', attr1: 'test', attr2: 1234 })];
 
 if(cluster.isMaster) {
-
   process.title = "node_tester_master";
-  for(var x=0; x<1; x++){
+  for(var x=1; x<numProcesses; x++){
     cluster.fork();
   }
+
   runTest();
   calculateEventReplies();
   Object.keys(cluster.workers).forEach(function(id) {
@@ -31,11 +38,14 @@ if(cluster.isMaster) {
   });
 }
 else {
-  process.title = "node_tester"+cluster.worker.id;
+  process.title = "node_tester" + cluster.worker.id;
   runTest();
 }
 
 function runTest() {
+  console.log("started test process");
+
+  // Open 'openSocketsMax' + few sockets
   setInterval(function() {
     if(openSocketsMax > openSockets) {
       var ws = new WebSocket('ws://127.0.0.1:8080');
@@ -43,17 +53,16 @@ function runTest() {
       ws.on('open', function () {
         openSockets++;
         ws.send(JSON.stringify({ message: 'newplayer', username: 'jaakko', password: 'test1234'}));
-        //ws.send(JSON.stringify({ message: 'login', username: 'jaakko', password: 'test1234' }));
         ws.open = true;
         var tmo = setInterval(function() {
           if(ws.open === true) {
             if(ws.readyState === ws.OPEN) {
               var msg = msgs[Math.round(Math.random()*(msgs.length-1))];
               ws.send(msg);
-              //ws.send((msgs[4]));
+              //ws.send((msgs[2]));
             }
           }
-        }, Math.round(Math.random()*25));
+        }, Math.round(Math.random()*messageInterval));
       });
       ws.on('close', function() {
         //console.log("socket close");
@@ -74,7 +83,7 @@ function runTest() {
         }
       })
     }
-  }, 50);
+  }, openSocketInterval);
 }
 
 function calculateEventReplies() {

@@ -10,12 +10,12 @@ var schema = {
     password: String
   }
 
-module.exports = function (message, socket, callback) {
+module.exports = function (message, callback) {
 
   //console.log("worker%s executing % event (%s times)", cluster.worker.id, message.message);
 
   if(check()) {
-    executeEvent(message, socket, callback);
+    executeEvent(message, callback);
   }
   else {
     console.log("ev '%s' failed", message.message);
@@ -31,7 +31,7 @@ module.exports = function (message, socket, callback) {
   }
 
   // Write your event code here
-  function executeEvent(message, socket, callback) {
+  function executeEvent(message, callback) {
     //console.log("ev '%s' running...", message.message);
     var resp = false;
     var player = new Player({ username: message.username, password: message.password });
@@ -48,6 +48,6 @@ module.exports = function (message, socket, callback) {
     }); 
 
     message.response = resp;
-    callback(message, socket);
+    callback(message);
   }
 };

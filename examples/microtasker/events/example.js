@@ -12,11 +12,11 @@ var schema = {
   };
 
 // This is generic stuff, don't touch
-module.exports = function (message, socket, callback) {
+module.exports = function (message, callback) {
   //console.log("worker%s executing %s event", cluster.worker.id, message.message);
 
   if(check()) {
-    executeEvent(message, socket, callback);
+    executeEvent(message, callback);
   }
   else {
     console.log("ev '%s' failed", message.message);
@@ -33,13 +33,13 @@ module.exports = function (message, socket, callback) {
   }
 
   // TODO: Write your event code here
-  function executeEvent(message, socket, callback) {
+  function executeEvent(message, callback) {
 
     //console.log("example event here");
     message.response = false;  // Tag true/false (for success/failure)
     message.reason = "Bad things happened because...";
 
     // Send response, sync players, broadcast or do some other things - but don't hassle
-    callback(message, socket);
+    callback(message);
   }
 };

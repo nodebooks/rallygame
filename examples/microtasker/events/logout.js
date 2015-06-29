@@ -9,7 +9,7 @@ var schema = {
     password: String
   }
 
-module.exports = function (message, socket, callback) {
+module.exports = function (message, callback) {
 
   console.log("worker%s executing logout event (%s times)", cluster.worker.id);
 
@@ -30,9 +30,9 @@ module.exports = function (message, socket, callback) {
   }
 
   // Write your event code here
-  function executeEvent(message, socket, callback) {
+  function executeEvent(message, callback) {
     //console.log("ev '%s' running...", message.message);
     message.response = true;
-    callback(message, socket);
+    callback(message);
   }
 }
