@@ -50,7 +50,6 @@ cluster.on('listening', function(worker, address) {
 
 Object.keys(cluster.workers).forEach(function(id) {
   cluster.workers[id].on('message', function(message, socket) {
-    messageCount++;
     if(undefined !== message.message) {
       switch (message.message) {
         case 'chat':

@@ -44,26 +44,26 @@ function runTest() {
         openSockets++;
         ws.send(JSON.stringify({ message: 'newplayer', username: 'jaakko', password: 'test1234'}));
         //ws.send(JSON.stringify({ message: 'login', username: 'jaakko', password: 'test1234' }));
-        this.open = true;
+        ws.open = true;
         var tmo = setInterval(function() {
           if(ws.open === true) {
             if(ws.readyState === ws.OPEN) {
               var msg = msgs[Math.round(Math.random()*(msgs.length-1))];
-              //ws.send(msg);
-              ws.send((msgs[4]));
+              ws.send(msg);
+              //ws.send((msgs[4]));
             }
           }
-        }, 15);
+        }, Math.round(Math.random()*25));
       });
       ws.on('close', function() {
         //console.log("socket close");
-        this.open = false;
+        ws.open = false;
         openSockets--;
       });
       ws.on('error', function(err) {
         console.log("error", err);
-        this.open = false;
-        this.end();
+        ws.open = false;
+        ws.close();
       });
       ws.on('message', function(message) {
         if(undefined !== process.send) {
@@ -74,7 +74,7 @@ function runTest() {
         }
       })
     }
-  }, 120);
+  }, 50);
 }
 
 function calculateEventReplies() {
@@ -86,7 +86,7 @@ function calculateEventReplies() {
     if(currentCount > eventCountMax) {
       eventCountMax = currentCount;
     }
-    console.log("events/sec: %s (max: %s). Sockets open %s/%s", 
+    console.log("messages/sec: %s (max: %s). Sockets open %s/%s", 
       currentCount, eventCountMax, openSockets, openSocketsMax);
     prevEventCount = eventCount;
   }, 1000);

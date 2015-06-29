@@ -144,17 +144,18 @@ var Websocket = function(server) {
   }
 
   function eventCallback(message, socket) {
-    if(socket.writable) {
+    if(socket.writable != false) {
       socket.write(encodeMessage(JSON.stringify(message)));
     }
   }
 
   function broadcast(message) {
     for (var id in _sockets) {
-      _sockets[id].write(encodeMessage(JSON.stringify(message)));
+      if(_sockets[id].writable !== false) {
+        _sockets[id].write(encodeMessage(JSON.stringify(message)));
+      }
     } 
   }
-
 
   return {
     broadcast: broadcast
