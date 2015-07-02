@@ -6,7 +6,7 @@ module.exports = {
     "title": "node_umaster"
   },
 
-  "cpus": os.cpus().length-1,
+  "cpus": os.cpus().length,
 
   "worker": {
     "file": "./lib/worker.js"

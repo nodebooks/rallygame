@@ -38,6 +38,7 @@ var Websocket = function(server) {
       // Terminate websocket protocol: encode message and 
       // create a JavaScript object
       var object = receive(chunk);
+      
       if(object) {
         // Valid data received: pass object to upper layer
         eventizer.push(object, socket.write);
