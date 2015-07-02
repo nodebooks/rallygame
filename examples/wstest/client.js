@@ -11,7 +11,7 @@ var openSocketInterval = 150;
 var openSocketsMax = 50;  // How many sockets to open per core
 var numProcesses = 1;
 
-
+// Some counters
 var openSockets = 0;  // How many sockets open currently (per core)
 var eventCount = 0;
 
@@ -65,9 +65,10 @@ function runTest() {
         var tmo = setInterval(function() {
           if(ws.open === true) {
             if(ws.readyState === ws.OPEN) {
-              var msg = msgs[Math.round(Math.random()*(msgs.length-1))];
-              ws.send(msg);
-              //ws.send((msgs[2]));
+              //var msg = msgs[Math.round(Math.random()*(msgs.length-1))];
+              //ws.send(msg);
+              console.log("sending message")
+              ws.send((msgs[1]));
             }
           }
         }, Math.round(Math.random()*messageInterval));
