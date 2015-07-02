@@ -35,7 +35,8 @@ var Eventizer = (function() {
       else {
         // Spam log
         var event = message['message'];
-        console.log("no listener file '../events/%s' for event '%s'", event, event);
+        console.log("no listener file '../events/%s' for event '%s'", 
+                     event, event);
       }
     }
     else {

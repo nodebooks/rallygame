@@ -17,8 +17,11 @@ var Websocket = function(server) {
   server.on('upgrade', function(request, socket, head){
 
     // Build a handshake response according the Spec.
-    var magicstring = request.headers['sec-websocket-key'] + '258EAFA5-E914-47DA-95CA-C5AB0DC85B11';
-    var accepthash = new Buffer(crypto.createHash('sha1').update(magicstring).digest('base64'));
+    var magicstring = request.headers['sec-websocket-key'] + 
+                                      '258EAFA5-E914-47DA-95CA-C5AB0DC85B11';
+    var accepthash = new Buffer(crypto.createHash('sha1')
+                               .update(magicstring)
+                               .digest('base64'));
 
     // Send update response to the client
     socket.write("HTTP/1.1 101 Switching Protocols\r\n" +
@@ -32,7 +35,8 @@ var Websocket = function(server) {
     addSocket(socket);
 
     socket.on('data', function(chunk) {
-      // Terminate websocket protocol: encode message and create a JavaScript object
+      // Terminate websocket protocol: encode message and 
+      // create a JavaScript object
       var object = receive(chunk);
       if(object) {
         // Valid data received: pass object to upper layer
@@ -105,7 +109,8 @@ var Websocket = function(server) {
   function decodeMessage (data) {
     var output = "";
     if(data[0] != 129) {
-      //console.log("Not a Text Frame - skipped opcode 0x" + (data[0] & 15).toString(16));
+      //console.log("Not a Text Frame - skipped opcode 0x" + 
+      //            (data[0] & 15).toString(16));
       //console.log("skipped message:", data);
     }
     else {
@@ -143,13 +148,7 @@ var Websocket = function(server) {
     return preCheckMessage(decodeMessage(message));
   }
 
-/*
-  function eventCallback(message) {
-    if(socket.writable !== false) {
-      socket.write(message);
-    }
-  }
-*/
+
   function broadcast(message) {
     // Send message to every connected socket
     _sockets.forEach(function(socket) {

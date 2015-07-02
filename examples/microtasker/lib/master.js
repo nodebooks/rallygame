@@ -53,7 +53,6 @@ Object.keys(cluster.workers).forEach(function(id) {
     if(undefined !== message.message) {
       switch (message.message) {
         case 'chat':
-          // Disable broadcast - eats too much CPU in testing
           broadcast(message);
           break;
         default:
@@ -61,7 +60,6 @@ Object.keys(cluster.workers).forEach(function(id) {
           break;
       }
     }
-
   });
 });
 
@@ -70,27 +68,3 @@ function broadcast(message) {
     cluster.workers[id].send(message);
   }
 }
-
-/*
-function startSocketServers() {
-  var path = config.sockets.master;
-
-  console.log("setup socket for", path);
-  fs.stat(path, function(err) {
-    if (!err) fs.unlinkSync(path);
-      var socketServer = net.createServer(function(socket) {
-        socket.on('data', function(data) {
-      });
-    });
-    socketServer.listen(path);
-  });
-}
-
-var tmo = setTimeout(function() {
-  console.log("disconnecting one worker");
-  Object.keys(cluster.workers).forEach(function(id) {
-    if(id==1)
-      cluster.workers[id].kill();
-  });
-}, 3000)
-*/

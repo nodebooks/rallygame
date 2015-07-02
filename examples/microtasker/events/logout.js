@@ -11,7 +11,7 @@ var schema = {
 
 module.exports = function (message, callback) {
 
-  console.log("worker%s executing logout event (%s times)", cluster.worker.id);
+  //console.log("worker%s executing logout event", cluster.worker.id);
 
   if(check()) {
     console.log("ev %s running...", this);

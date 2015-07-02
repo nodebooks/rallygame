@@ -12,7 +12,7 @@ var schema = {
 
 module.exports = function (message, callback) {
 
-  //console.log("worker%s executing % event (%s times)", cluster.worker.id, message.message);
+  //console.log("worker%s executing % event", cluster.worker.id);
 
   if(check()) {
     executeEvent(message, callback);
@@ -33,7 +33,8 @@ module.exports = function (message, callback) {
   // Write your event code here
   function executeEvent(message, callback) {
     //console.log("ev '%s' running...", message.message);
-    var player = new Player({ username: message.username, password: message.password });
+    var player = new Player({ username: message.username, 
+                              password: message.password });
 
     player.save(function (err, player) {
       var resp = false;
@@ -42,7 +43,8 @@ module.exports = function (message, callback) {
         resp = false;
       }
       else {
-        console.log("ev '%s' user creation passed. New user '%s' created.", message.message, message.username);
+        console.log("ev '%s' user creation passed. New user '%s' created.", 
+                    message.message, message.username);
         resp = true;
       }
       message.response = resp;

@@ -11,7 +11,7 @@ var schema = {
 
 module.exports = function (message, callback) {
 
-  //console.log("worker%s executing % event (%s times)", cluster.worker.id, message.message);
+  //console.log("worker%s executing % event", cluster.worker.id);
 
   if(check()) {
     executeEvent(message, callback);
@@ -32,7 +32,8 @@ module.exports = function (message, callback) {
   // Write your event code here
   function executeEvent(message, callback) {
     //console.log("ev '%s' running...", message.message);
-    // Do some calculations here - currently just wait 0-1 ms before sending response
+    // Do some calculations here - currently just wait 0-1 ms 
+    // before sending response
 
     setTimeout(function() {
       // TODO: Sync players (run race on master process for easy routing?)
