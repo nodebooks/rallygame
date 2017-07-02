@@ -1,0 +1,6 @@
+version: '3'  # Co-operate with Docker Swarm
+services:
+  nginx: 
+    build: ./services/nginx/
+    ports:
+      - "80:80"

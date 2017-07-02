@@ -6,10 +6,10 @@ var os = require('os');
 
 
 // Configurable options
-var messageInterval = 25;
+var messageInterval = 20;
 var openSocketInterval = 150;
 var openSocketsMax = 50;  // How many sockets to open per core
-var numProcesses = 1;
+var numProcesses = 3;
 
 // Some counters
 var openSockets = 0;  // How many sockets open currently (per core)
@@ -67,7 +67,7 @@ function runTest() {
             if(ws.readyState === ws.OPEN) {
               //var msg = msgs[Math.round(Math.random()*(msgs.length-1))];
               //ws.send(msg);
-              console.log("sending message")
+              //console.log("sending message")
               ws.send((msgs[1]));
             }
           }
