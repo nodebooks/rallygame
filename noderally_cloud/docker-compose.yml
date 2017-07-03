@@ -1,0 +1,14 @@
+version: '3'  # Co-operate with Docker Swarm
+services:
+  nginx: 
+    build: ./services/nginx/
+    ports:
+      - "80:80"
+  lobby: 
+    build: ./services/lobby/
+    ports:
+      - "8000:8000"
+  chat: 
+    build: ./services/chat/
+    ports:
+      - "5000:5000"

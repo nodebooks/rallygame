@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Agar.io clone</title>
+    <script type="text/javascript" src="agario.js"></script>
+    <script type="text/javascript" src="websocket.js"></script>
+  </head>
+  <body style="overflow: hidden;" onload="init()">
+    <canvas id="myCanvas" width="1280" height="800" style="border: 1px solid;">
+    </canvas>
+
+    <script type="text/javascript">
+      var canvas = document.getElementById('myCanvas');
+      var ctx = canvas.getContext("2d");
+      var player = new Bubble(canvas, 100, 100, 20);
+      player.bindPlayer('jaakko', 1);
+
+      var bubbleCount = 200;
+      var bubbles = [];
+
+      function render() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Define grid
+        ctx.lineWidth = 0.2;
+        ctx.strokeStyle = "green";
+        ctx.fillStyle = "rgba(128, 128, 128, 0.1)";
+        
+        var xgrid = canvas.width;
+        while(xgrid) {
+          ctx.moveTo(xgrid, 0);
+          ctx.lineTo(xgrid, canvas.height);
+          xgrid -= 20;
+        }
+
+        var ygrid = canvas.height;
+        while(ygrid) {
+          ctx.moveTo(0, ygrid);
+          ctx.lineTo(canvas.width, ygrid);
+          ygrid -= 20;
+        }
+        // Render grid
+        ctx.stroke();
+
+        // Plot bubbles
+        for(var bubble in bubbles) {
+          var ball = bubbles[bubble];
+          var dx = player.x - ball.x;
+          var dy = player.y - ball.y;
+          var distance = Math.sqrt(dx*dx+dy*dy);
+
+          if(distance < player.radius + ball.radius) {
+            player.radius += ball.radius / player.radius;
+            delete bubbles[bubble];
+            bubbles.splice(bubble, 1);
+            addBubble();
+          }
+          else {
+            ball.render(ball);
+          }
+        }
+        player.move(player);
+        player.render(player);
+
+        window.requestAnimationFrame(render);
+      }
+
+      function init() {
+
+        connectLobby();
+
+        for(var i=0; i<bubbleCount; i++) {
+          addBubble();
+        }
+        window.requestAnimationFrame(render);
+      }
+
+      function addBubble() {
+        var bubble = new Bubble(canvas,
+                                Math.floor(Math.random()*canvas.width),
+                                Math.floor(Math.random()*canvas.height),
+                                Math.floor(Math.random()*2)+8);
+
+        if(bubble.y < bubble.radius) {
+          bubble.y = bubble.radius;
+        }
+        if(bubble.x < bubble.radius){
+          bubble.x = bubble.radius;
+        }
+        bubbles.push(bubble);
+      }
+    </script>
+  </body>
+</html>
