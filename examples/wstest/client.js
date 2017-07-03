@@ -6,26 +6,14 @@ var os = require('os');
 
 
 // Configurable options
-var messageInterval = 20;
-var openSocketInterval = 150;
-var openSocketsMax = 50;  // How many sockets to open per core
-var numProcesses = 3;
+var messageInterval = 50;
+var openSocketInterval = 100;
+var openSocketsMax = 300;  // How many sockets to open per core
+var numProcesses = 1;
 
 // Some counters
 var openSockets = 0;  // How many sockets open currently (per core)
 var eventCount = 0;
-
-var msgs = [
-  JSON.stringify({ message: 'newplayer', 
-                   username: 'jaakko', password: 'test1234' }),
-  JSON.stringify({ message: 'login', 
-                   username: 'jaakko', password: 'test1234' }),
-  JSON.stringify({ message: 'chat', 
-                   content: 'Hello world!' }),
-  JSON.stringify({ message: 'playerinput',
-                   username: 'jaakko', direction: 'general' }),
-  JSON.stringify({ message: 'example',
-                   username: 'jaakko', attr1: 'test', attr2: 1234 })];
 
 if(cluster.isMaster) {
   process.title = "node_tester_master";
@@ -58,23 +46,35 @@ function runTest() {
 
       ws.on('open', function () {
         openSockets++;
-        ws.send(JSON.stringify({ message: 'newplayer', 
-                                 username: 'jaakko', 
-                                 password: 'test1234'}));
+
         ws.open = true;
         var tmo = setInterval(function() {
+          var msgs = [
+              JSON.stringify({ message: 'newplayer', 
+                              username: 'player'+Math.floor(Math.random()*100000), password: 'test1234' }),
+              JSON.stringify({ message: 'login', 
+                              username: 'player'+Math.floor(Math.random()*100000), password: 'test1234' }),
+              JSON.stringify({ message: 'chat', 
+                              content: 'Hello world!' }),
+              JSON.stringify({ message: 'playerinput',
+                              username: 'player'+Math.floor(Math.random()*100000), direction: 'general' }),
+              JSON.stringify({ message: 'example',
+                              username: 'player'+Math.floor(Math.random()*100000), attr1: 'test', attr2: 1234 })
+              ];
+
           if(ws.open === true) {
             if(ws.readyState === ws.OPEN) {
-              //var msg = msgs[Math.round(Math.random()*(msgs.length-1))];
-              //ws.send(msg);
+              var msg = msgs[Math.round(Math.random()*(msgs.length-1))];
+              ws.send(msg);
               //console.log("sending message")
-              ws.send((msgs[1]));
+              //ws.send((msgs[1]));
             }
           }
-        }, Math.round(Math.random()*messageInterval));
-      });
+        }, messageInterval
+        )});
+
       ws.on('close', function() {
-        //console.log("socket close");
+        //console.log("socket closed");
         ws.open = false;
         openSockets--;
       });

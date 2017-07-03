@@ -4,7 +4,17 @@ var mongoose = require('mongoose');
 var config = require('../config/db');
 
 var Database = (function() {
-  mongoose.connect(config.url);
+  console.log("trying to connect mongodb");
+  var promise = mongoose.connect(config.url, {
+    useMongoClient: true
+  });
+
+  promise.then(function(db) {
+    console.log("oh it's a promise");
+    /* Use `db`, for instance `db.model()`
+  });
+  // Or, if you already have a connection
+  connection.openUri(config.url, { /* options */ });
 
   mongoose.connection.on('connection', function() {
     console.log("mongodb connection '%s' is open", dbUrl);

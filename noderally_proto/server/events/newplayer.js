@@ -8,11 +8,11 @@ var schema = {
     message: String,
     username: String,
     password: String
-  }
+  };
 
 module.exports = function (message, callback) {
 
-  //console.log("worker%s executing % event", cluster.worker.id);
+  //console.log("worker%s executing event", cluster.worker.id);
 
   if(check()) {
     executeEvent(message, callback);
@@ -32,14 +32,14 @@ module.exports = function (message, callback) {
 
   // Write your event code here
   function executeEvent(message, callback) {
-    //console.log("ev '%s' running...", message.message);
+    console.log("ev '%s' running...", JSON.stringify(message));
     var player = new Player({ username: message.username, 
                               password: message.password });
 
     player.save(function (err, player) {
       var resp = false;
       if(err) {
-        //console.log("ev '%s' failed in user creation...", message.message);
+        console.log("ev '%s' failed in user creation...", message.message);
         resp = false;
       }
       else {

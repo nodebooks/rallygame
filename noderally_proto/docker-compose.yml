@@ -3,8 +3,8 @@ services:
   mongodb:
     build: ./mongodb
     container_name: mongodb
-    volumes:
-      - ~/mongodb/0:/data/db
+#    volumes:
+#      - ~/mongodb/0:/data/db
     command: ["mongod", "--dbpath", "/data/db"]
 
   rallyserver: 
