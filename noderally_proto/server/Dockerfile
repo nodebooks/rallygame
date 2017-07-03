@@ -1,13 +1,11 @@
 FROM mhart/alpine-node:latest
 
-COPY ./src /app
+COPY . /app/
 
 WORKDIR /app
 
-RUN npm install
+RUN npm install 
 
 EXPOSE 8000
 
-CMD ["node", "lobby.js"]
-
-
+CMD ["node", "server.js"]

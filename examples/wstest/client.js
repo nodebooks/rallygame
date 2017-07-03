@@ -54,7 +54,7 @@ function runTest() {
   // Open 'openSocketsMax' + few sockets
   setInterval(function() {
     if(openSocketsMax > openSockets) {
-      var ws = new WebSocket('ws://127.0.0.1:8080');
+      var ws = new WebSocket('ws://localhost:8000');
 
       ws.on('open', function () {
         openSockets++;
