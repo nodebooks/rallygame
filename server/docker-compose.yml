@@ -4,3 +4,7 @@ services:
     build: ./services/nginx/
     ports:
       - "80:80"
+  lobby: 
+    build: ./services/lobby/
+    ports:
+      - "8000:8000"

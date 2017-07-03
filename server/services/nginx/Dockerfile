@@ -1,5 +1,10 @@
 FROM nginx:alpine
+
 COPY ./www /usr/share/nginx/html/
+
+COPY ./nginx.conf /etc/nginx/nginx.conf
+COPY ./nginx.conf /usr/local/nginx/conf/nginx.conf
+COPY ./nginx.conf /usr/local/etc/nginx/nginx.conf
 
 EXPOSE 80
 

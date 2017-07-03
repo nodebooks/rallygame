@@ -3,12 +3,13 @@
   <head>
     <meta charset="UTF-8">
     <title>Agar.io clone</title>
-    <script type="text/javascript" src="agario.js">
-    </script>
+    <script type="text/javascript" src="agario.js"></script>
+    <script type="text/javascript" src="websocket.js"></script>
   </head>
   <body style="overflow: hidden;" onload="init()">
     <canvas id="myCanvas" width="1280" height="800" style="border: 1px solid;">
     </canvas>
+
     <script type="text/javascript">
       var canvas = document.getElementById('myCanvas');
       var ctx = canvas.getContext("2d");
@@ -66,6 +67,9 @@
       }
 
       function init() {
+
+        connectLobby();
+
         for(var i=0; i<bubbleCount; i++) {
           addBubble();
         }
