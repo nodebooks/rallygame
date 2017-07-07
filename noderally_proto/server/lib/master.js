@@ -53,7 +53,11 @@ Object.keys(cluster.workers).forEach(function(id) {
     if(undefined !== message.message) {
       switch (message.message) {
         case 'chat':
+          console.log("chatmessage")
           broadcast(message);
+          break;
+        case 'race':
+          console.log("race request handled on master");
           break;
         default:
           console.log("default branch");

@@ -9,7 +9,7 @@ var Eventizer = (function() {
 
   var _events = require('../events/');
 
-  // Push data from websocket
+  // Data is pushed from the websocket
   function push(message, socket, callback) {
     generateEvent(message, socket, callback);
   }

@@ -59,7 +59,9 @@ function runTest() {
               JSON.stringify({ message: 'playerinput',
                               username: 'player'+Math.floor(Math.random()*100000), direction: 'general' }),
               JSON.stringify({ message: 'example',
-                              username: 'player'+Math.floor(Math.random()*100000), attr1: 'test', attr2: 1234 })
+                              username: 'player'+Math.floor(Math.random()*100000), attr1: 'test', attr2: 1234 }),
+              JSON.stringify({ message: 'race',
+                              username: 'player'+Math.floor(Math.random()*100000), type: 'create', subtype: "1234" })                              
               ];
 
           if(ws.open === true) {

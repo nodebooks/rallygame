@@ -33,6 +33,7 @@ module.exports = function (message, callback) {
   // Write your event code here
   function executeEvent(message, callback) {
     console.log("ev '%s' running...", JSON.stringify(message));
+    
     var player = new Player({ username: message.username, 
                               password: message.password });
 
