@@ -8,6 +8,14 @@ We want to take the old classic Slicks 'n' Slide rally to this millennium. The g
 
 ### The Architecture
 
+The prototype
+
+```
+ [UE4 client] <-------> [ microtasker & game ] 
+```
+
+Final deployment
+
 ```
  [UE4 client] <-------> [NGINX] <-------> [ SWARM / microservices ] 
 ```
