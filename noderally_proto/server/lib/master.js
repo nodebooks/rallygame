@@ -18,6 +18,10 @@ cluster.setupMaster({
   silent: false // Let workers use std[in/out/err]
 });
 
+// Create Lobby
+var Lobby = require("../game/lobby");
+var lobby = new Lobby();
+
 // Spawn workers.
 for (var i = 0; i < config.cpus; i++) {
   cluster.fork();
@@ -53,8 +57,8 @@ Object.keys(cluster.workers).forEach(function(id) {
     if(undefined !== message.message) {
       switch (message.message) {
         case 'chat':
-          console.log("chatmessage")
-          broadcast(message);
+          //console.log("chatmessage")
+          lobby.broadcast(message);
           break;
         case 'race':
           console.log("race request handled on master");
@@ -66,9 +70,3 @@ Object.keys(cluster.workers).forEach(function(id) {
     }
   });
 });
-
-function broadcast(message) {
-  for (var id in cluster.workers) {
-    cluster.workers[id].send(message);
-  }
-}

@@ -32,7 +32,7 @@ module.exports = function (message, callback) {
 
   // Write your event code here
   function executeEvent(message, callback) {
-    console.log("ev '%s' running...", JSON.stringify(message));
+    //console.log("ev '%s' running...", JSON.stringify(message));
     
     var player = new Player({ username: message.username, 
                               password: message.password });
@@ -44,8 +44,8 @@ module.exports = function (message, callback) {
         resp = false;
       }
       else {
-        console.log("ev '%s' user creation passed. New user '%s' created.", 
-                    message.message, message.username);
+        //console.log("ev '%s' user creation passed. New user '%s' created.", 
+        //  message.message, message.username);
         resp = true;
       }
       message.response = resp;

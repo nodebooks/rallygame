@@ -10,7 +10,7 @@ var Database = (function() {
   });
 
   promise.then(function(db) {
-    console.log("oh it's a promise");
+    //console.log("oh it's a promise");
     /* Use `db`, for instance `db.model()`
   });
   // Or, if you already have a connection

@@ -53,7 +53,7 @@ module.exports = function (message, callback) {
       break;
 
       case 'list':
-        // List ongoing races
+        // TODO: List ongoing races
       break;
 
       default:

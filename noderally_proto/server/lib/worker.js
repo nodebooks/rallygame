@@ -26,9 +26,6 @@ process.on('message', function(message, handle) {
     case 'chat':
       ws.broadcast(message);
       break;
-    case 'race':
-      console.log("race request got on worker");
-      break;
     default:
       console.log("default branch");
       break;
