@@ -1,0 +1,16 @@
+version: '3'  # Co-operate with Docker Swarm
+services:
+  mongodb:
+    build: ./mongodb
+    container_name: mongodb
+#    volumes:
+#      - ~/mongodb/0:/data/db
+    command: ["mongod", "--dbpath", "/data/db"]
+
+  rallyserver: 
+    build: ./server
+    container_name: rallyserver
+    depends_on: 
+      - mongodb
+    ports:
+      - "8000:8000"
