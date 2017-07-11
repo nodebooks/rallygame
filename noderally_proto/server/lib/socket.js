@@ -14,6 +14,14 @@ var Websocket = function(server) {
   var _sockets = [];
   var _socketId = 0;
 
+  var interval = setInterval(function() {
+    var connected = 0;
+    _sockets.forEach(function(socket) {
+      connected++;
+    });
+    console.log("worker", cluster.worker.id, "has", connected, "connected sockets");
+  }, 5000);
+
   server.on('upgrade', function(request, socket, head){
 
     // Build a handshake response according the Spec.

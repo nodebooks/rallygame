@@ -48,7 +48,6 @@ var Eventizer = (function() {
   (function bindEvents() {
     Object.keys(_events).forEach(function(event) {
       ee.on(event.toString(), require('../events/'+event.toString()));
-      //ee.on(event.toString(), justTesting);
     });
   })();
 

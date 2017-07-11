@@ -40,7 +40,7 @@ cluster.on('disconnect', function(worker) {
 });
 
 cluster.on('fork', function(worker) {
-  //console.log("Worker", worker.id, "is forked");
+  console.log("Worker", worker.id, "is forked");
 });
 
 cluster.on('online', function(worker) {
@@ -52,12 +52,21 @@ cluster.on('listening', function(worker, address) {
     worker.id, address.address, address.port);
 });
 
+cluster.on('message', (worker, message, handle) => {
+  if (arguments.length === 2) {
+    handle = message;
+    message = worker;
+    worker = undefined;
+  }
+  //console.log("worker", worker.id, "received message", message, "with handle", handle);
+});
+
+/*
 Object.keys(cluster.workers).forEach(function(id) {
   cluster.workers[id].on('message', function(message, socket) {
     if(undefined !== message.message) {
       switch (message.message) {
         case 'chat':
-          //console.log("chatmessage")
           lobby.broadcast(message);
           break;
         case 'race':
@@ -69,4 +78,4 @@ Object.keys(cluster.workers).forEach(function(id) {
       }
     }
   });
-});
+});*/

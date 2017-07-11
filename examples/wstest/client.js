@@ -6,10 +6,11 @@ var os = require('os');
 
 
 // Configurable options
-var messageInterval = 50;
-var openSocketInterval = 100;
-var openSocketsMax = 300;  // How many sockets to open per core
-var numProcesses = 1;
+var messageInterval = 200;
+var openSocketInterval = 300;
+var openSocketsMax = 1000;  // How many sockets to open per core
+var numProcesses = 2;
+var idMax = 100;
 
 // Some counters
 var openSockets = 0;  // How many sockets open currently (per core)
@@ -51,17 +52,17 @@ function runTest() {
         var tmo = setInterval(function() {
           var msgs = [
               JSON.stringify({ message: 'newplayer', 
-                              username: 'player'+Math.floor(Math.random()*100000), password: 'test1234' }),
+                              username: 'player'+Math.floor(Math.random()*idMax), password: 'test1234' }),
               JSON.stringify({ message: 'login', 
-                              username: 'player'+Math.floor(Math.random()*100000), password: 'test1234' }),
+                              username: 'player'+Math.floor(Math.random()*idMax), password: 'test1234' })/*,
               JSON.stringify({ message: 'chat', 
                               content: 'Hello world!' }),
               JSON.stringify({ message: 'playerinput',
-                              username: 'player'+Math.floor(Math.random()*100000), direction: 'general' }),
+                              username: 'player'+Math.floor(Math.random()*idMax), direction: 'general' }),
               JSON.stringify({ message: 'example',
-                              username: 'player'+Math.floor(Math.random()*100000), attr1: 'test', attr2: 1234 }),
+                              username: 'player'+Math.floor(Math.random()*idMax), attr1: 'test', attr2: 1234 }),
               JSON.stringify({ message: 'race',
-                              username: 'player'+Math.floor(Math.random()*100000), type: 'create', subtype: "1234" })                              
+                              username: 'player'+Math.floor(Math.random()*idMax), type: 'create', subtype: "1234", hash: "" })      */                
               ];
 
           if(ws.open === true) {
@@ -81,11 +82,12 @@ function runTest() {
         openSockets--;
       });
       ws.on('error', function(err) {
-        console.log("error", err);
+        //console.log("error", err);
         ws.open = false;
         ws.close();
       });
       ws.on('message', function(message) {
+        //console.log("returned", message);
         if(undefined !== process.send) {
           process.send('reply');
         }
