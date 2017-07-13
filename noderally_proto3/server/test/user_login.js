@@ -7,7 +7,7 @@ ws.on('open', function () {
     // Send login message
     ws.send(JSON.stringify({
         message: "login",
-        username: "player2",
+        username: "player1",
         password: "test1234",
     }));
 });
@@ -21,5 +21,5 @@ ws.on('error', function (err) {
 });
 
 ws.on('message', function (message) {
-    console.log("got message", JSON.parse(message));
+    console.log("got message", JSON.parse(message));    
 });

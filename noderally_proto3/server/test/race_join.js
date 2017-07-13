@@ -35,6 +35,5 @@ ws.on('error', function (err) {
 });
 
 ws.on('message', function (message) {
-    var msg = JSON.parse(message);
-    console.log("got message", msg);
+    console.log("got message", JSON.parse(message));    
 });

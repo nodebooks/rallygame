@@ -24,5 +24,5 @@ ws.on('error', function (err) {
 });
 
 ws.on('message', function (message) {
-    console.log("got message", JSON.parse(message));
+    console.log("got message", JSON.parse(message));    
 });

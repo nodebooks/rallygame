@@ -4,12 +4,23 @@ var ws = new Websocket('ws://localhost:8000');
 
 ws.on('open', function () {
     console.log("websocket opened");
+
     // Send login message
     ws.send(JSON.stringify({
         message: "login",
         username: "player1",
         password: "test1234",
     }));
+
+    let happen = setTimeout(function() {
+        // Send test message
+        ws.send(JSON.stringify({
+            message: "race",
+            username: "player1",
+            type: "create",
+            track: "example"
+        }));
+    }, 1000);
 });
 
 ws.on('close', function () {
@@ -21,5 +32,5 @@ ws.on('error', function (err) {
 });
 
 ws.on('message', function (message) {
-    console.log("got message", JSON.parse(message));
+    console.log("got message", JSON.parse(message));    
 });
