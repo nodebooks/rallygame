@@ -54,7 +54,7 @@ function runTest() {
               JSON.stringify({ message: 'newplayer', 
                               username: 'player'+Math.floor(Math.random()*idMax), password: 'test1234' }),
               JSON.stringify({ message: 'login', 
-                              username: 'player'+Math.floor(Math.random()*idMax), password: 'test1234' })/*,
+                              username: 'player'+Math.floor(Math.random()*idMax), password: 'test1234' }),
               JSON.stringify({ message: 'chat', 
                               content: 'Hello world!' }),
               JSON.stringify({ message: 'playerinput',
@@ -62,7 +62,7 @@ function runTest() {
               JSON.stringify({ message: 'example',
                               username: 'player'+Math.floor(Math.random()*idMax), attr1: 'test', attr2: 1234 }),
               JSON.stringify({ message: 'race',
-                              username: 'player'+Math.floor(Math.random()*idMax), type: 'create', subtype: "1234", hash: "" })      */                
+                              username: 'player'+Math.floor(Math.random()*idMax), type: 'create', subtype: "1234", hash: "" })               
               ];
 
           if(ws.open === true) {

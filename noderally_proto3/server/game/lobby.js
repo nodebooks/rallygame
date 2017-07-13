@@ -24,9 +24,6 @@ class Lobby {
       _playerCount++;
       this._players[socket.player.sid] = socket;
     }
-
-    // JOIN RACE AUTOMATICALLY AFTER AUTHENTICATION
-    this._races[0].join(socket);
   }
 
   leave(socket) {
@@ -40,30 +37,13 @@ class Lobby {
     }
   }
 
-  race(message, socket) {
-    //console.log(socket.player.username, "is trying to", message.type, "race", message.hash);
-    switch(message.type) {
-      case 'join':
-        break;
-      case 'spectate':
-        break;
-      case 'create':
-        break;
-      default:
-        console.log("undefined race type", message.type);
-        break;
-    }
-  }
-
   handleMessage(message, socket) {
     //console.log("lobby received some message");
 
     // Socket is verified at this point
     switch(message.message) {
-      case 'playerinput':
-        break;
       case 'race':
-        this.race(message, socket);
+        this._race(message, socket);
         break;
       default:
         break;
@@ -73,6 +53,64 @@ class Lobby {
   stats() {
     var amount = 0;
     console.log("lobby has", _playerCount, "connected players");    
+  }
+
+  _race(message, socket) {
+    console.log(socket.player.username, "is trying to", message.type, "race", message.hash);
+    switch(message.type) {
+      case 'join':
+        //this._races[0].join(message, socket);
+        break;
+      case 'spectate':
+        this._spectateRace(message, socket);
+        break;
+      case 'create':
+        this._createRace(message, socket);
+        break;
+      case 'list':
+        this._listRaces(message, socket);
+        break;
+      default:
+        console.log("undefined race type", message.type);
+        break;
+    }
+  }
+
+  _spectateRace(message, socket) {
+    message.response = false;
+    for(let race in this._races) {
+      if(this._races[race].hash === message.hash) {
+        message.response = true;
+        console.log("found race, proceeding");
+        this._races[race].spectate(message, socket);
+      }
+    }
+  }
+
+  _createRace(message, socket) {
+    message.response = false;
+    try {
+      var track = require('../model/tracks/' + message['track'] + '.json');
+      console.log("track found, proceeding");
+      message.response = true;
+      this._races.push(new Race(message, socket));
+    }
+    catch (e) {
+      console.log("track'" + message.track + "' not found");
+    }
+    console.log("returning message")
+    socket.send(JSON.stringify(message));
+  }
+
+  _listRaces(message, socket) {
+    console.log("listing races");
+    let races = [];
+    for(let race in this._races) {
+      races.push(this._races[race]);
+    }
+    message.races = races;
+    message.response = true;
+    socket.send(JSON.stringify(message));
   }
 }
 

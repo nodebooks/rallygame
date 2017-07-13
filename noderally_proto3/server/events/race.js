@@ -9,7 +9,8 @@ var schema = {
     message: String,
     username: String,
     type: String, // [create|join|spectate|list]
-    hash: String // Hash for the race to [create|join|spectate]
+    hash: String, // Hash for the race to [create|join|spectate],
+    races: Array
   };
 
 // This is generic stuff, don't touch

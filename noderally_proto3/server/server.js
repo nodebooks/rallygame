@@ -94,8 +94,6 @@ class GameServer {
         //console.log("socket.player", socket.player, message);
         if(!socket.player.isVerified) {
           Player.findOne({ 'username' : message.username}, function(err, player) {
-            if( message.username !== player.username) {
-            }
             if(player && !err) {
               if(player.isValidPassword(message.password)) {
                 message.response = true;

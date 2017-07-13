@@ -9,19 +9,22 @@
 // 3. synchronize players
 
 // Create one object per race on MASTER process
-s
 var eventizer = require("../events/index.js").bind();
 //var events = eventizer.bindEvents(["logout", "playerinput"]);
 
 class Race {
-  constructor(socket) {
-    
+  constructor(hash) {
     this.started = new Date().getTime();  // Total duration
     this.length = 360; // Max duration in seconds
+    this.playerMax = 8;
   }
 
   start(evRace) {
     console.log("new race started");
+  }
+
+  synchronize() {
+
   }
 
   end() {

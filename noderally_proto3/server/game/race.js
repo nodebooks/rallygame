@@ -11,19 +11,32 @@ const uuid = require('uuid4');
 const WebSocket = require('ws');
 
 class Race {
-  constructor() {
-    
-    this._started = new Date().getTime();  // Total duration
-    this._length = 360; // Max duration in seconds
+  constructor(message, socket) {
+    this._initiator = socket ? socket.player.username : "server demo";
+    this._track = message ? ((message.track) ? message.track : "example") : "example";
+    this._uuid = message ? ((message.hash) ? message.hash : uuid()) : uuid();
     this._attendees = new Array(10);
     this._spectators = new Array(100);
-    this._uuid = uuid();
 
-    this._init();
+    this._started = new Date().getTime();  // Total duration
+    this._length = 360; // Max duration in seconds
+    this._syncInterval = 1000;
+
+    this._init(message, socket);
   }
 
-  _init() {
-    let interval = setInterval(function sync(players) {
+  _init(message, socket) {
+
+    let frame = 0;
+    // Join to race
+    if(socket) {
+      this._attendees.push(socket);
+    }
+    else {
+      console.log("socket not defined, expecting this to be initiated by server");
+    }
+
+    let interval = setInterval(function (players, hash) {
       var playerstatuses = []; 
       for(const player in players) {
         playerstatuses.push(players[player].player);
@@ -33,18 +46,28 @@ class Race {
         if(players[player].readyState === WebSocket.OPEN) {
           players[player].send(JSON.stringify({
             "message": "sync",
-            "hash": this.uuid,
-            "players": playerstatuses
+            "hash": hash,
+            "players": playerstatuses,
+            "frame": frame++
           }));
         }
       }
-    }, 50, this._attendees );
+    }, this._syncInterval, this._attendees, this._uuid);
+
+    console.log("created new race", JSON.stringify(this));
   }
 
-  join(socket) {
+  join(message, socket) {
     console.log("joining the race");
     socket.on('message', function incoming(message) {
-      console.log("asdfasdf");
+      message = JSON.parse(message);
+      switch(message.message) {
+        case 'playerinput':
+          console.log("received player input", message);
+          break;
+        default:
+          break;
+      }
     });
 
     this._attendees.push(socket);
@@ -58,7 +81,9 @@ class Race {
     console.log("race finished in %s seconds", this.duration);
   }
 
-  spectate(socket) {
+  spectate(message, socket) {
+    // Do not handle player inputs from spectators,
+    // only send other players data to them
     this._spectators[socket.uuid] = socket;
   }
 
