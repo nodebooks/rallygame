@@ -93,10 +93,11 @@ class Lobby {
       var track = require('../model/tracks/' + message['track'] + '.json');
       console.log("track found, proceeding");
       message.response = true;
-      this._races.push(new Race(message, socket));
+      let race = new Race(message, socket);
+      this._races.push(race._uuid);
     }
     catch (e) {
-      console.log("track'" + message.track + "' not found");
+      console.log("track'" + message.track + "' not found", e);
     }
     console.log("returning message")
     socket.send(JSON.stringify(message));
@@ -106,10 +107,15 @@ class Lobby {
     console.log("listing races");
     let races = [];
     for(let race in this._races) {
-      races.push(this._races[race]);
+      races.push({
+        "initiator": this._races[race].initiator,
+        "track": this._races[race].track,
+        "hash": this._races[race]._uuid
+    });
     }
     message.races = races;
     message.response = true;
+
     socket.send(JSON.stringify(message));
   }
 }

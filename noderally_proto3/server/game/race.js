@@ -54,7 +54,7 @@ class Race {
       }
     }, this._syncInterval, this._attendees, this._uuid);
 
-    console.log("created new race", JSON.stringify(this));
+    //console.log("created new race", JSON.stringify(this));
   }
 
   join(message, socket) {
