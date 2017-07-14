@@ -1,22 +1,44 @@
 var Websocket = require('ws');
-var uuid = require('uuid4');
 
 var ws = new Websocket('ws://localhost:8000');
 
+let hash = undefined;
+
 ws.on('open', function () {
     console.log("websocket opened");
+
     // Send login message
     ws.send(JSON.stringify({
-        message: "race",
-        username: "player1",
-        type: "spectate",
-        track: "example", // Create a race with a specific map specified in model/tracks/*
-        hash: "asdf-1234"
+        message: "login",
+        username: "player4",
+        password: "test1234",
     }));
+
+    let list = setTimeout(function() {
+        // Send test message
+        ws.send(JSON.stringify({
+            message: "race",
+            username: "player4",
+            type: "list",
+            track: "example"
+        }));
+    }, 500);
+
+    let join = setTimeout(function() {
+        console.log("trying to spectate race", hash);
+        // Send test message
+        ws.send(JSON.stringify({
+            message: "race",
+            username: "player4",
+            type: "spectate",
+            track: "example", // Create a race with a specific map specified in model/tracks/*
+            hash: hash
+        }));
+    }, 1000);
 });
 
 ws.on('close', function () {
-    //console.log("socket closed");
+    console.log("socket closed");
 });
 
 ws.on('error', function (err) {
@@ -24,5 +46,13 @@ ws.on('error', function (err) {
 });
 
 ws.on('message', function (message) {
-    console.log("got message", JSON.parse(message));    
+    let msg = JSON.parse(message);
+    console.log("got message", msg);
+    if(msg.message === 'race') {
+        console.log("ready to spectate race");
+        if(msg.type === 'list') {
+            console.log("found race", msg.track, "with hash", msg.races[0].hash);
+            hash = msg.races[0].hash;
+        }
+    }
 });

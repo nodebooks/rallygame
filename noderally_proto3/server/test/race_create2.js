@@ -10,7 +10,7 @@ ws.on('open', function () {
     // Send login message
     ws.send(JSON.stringify({
         message: "login",
-        username: "player1",
+        username: "player2",
         password: "test1234",
     }));
 
@@ -18,7 +18,7 @@ ws.on('open', function () {
         // Send test message
         ws.send(JSON.stringify({
             message: "race",
-            username: "player1",
+            username: "player2",
             type: "create",
             track: "example", // Create a race with a specific map specified in model/tracks/*
             hash: matchId

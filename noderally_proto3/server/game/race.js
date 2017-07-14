@@ -37,40 +37,53 @@ class Race {
       console.log("socket not defined, expecting this to be initiated by server");
     }
 
-    let interval = setInterval(function (players, hash) {
+    let interval = setInterval(function (players, spectators, hash) {
       var playerstatuses = []; 
       for(const player in players) {
         playerstatuses.push(players[player].player);
       }
 
+      // Synchronize attendees
       for(const player in players) {
         if(players[player].readyState === WebSocket.OPEN) {
           players[player].send(JSON.stringify({
             "message": "sync",
             "hash": hash,
             "players": playerstatuses,
-            "frame": frame++
+            "frame": frame
           }));
         }
       }
-    }, this._syncInterval, this._attendees, this._uuid);
+
+      // Sync spectators if any
+      for(const spectator in spectators) {
+        if(spectators[spectator].readyState === WebSocket.OPEN) {
+          spectators[spectator].send(JSON.stringify({
+            "message": "sync",
+            "hash": hash,
+            "players": playerstatuses,
+            "frame": frame
+          }));
+        }
+      }
+      frame++;
+    }, this._syncInterval, this._attendees, this._spectators, this._uuid);
 
     //console.log("created new race", JSON.stringify(this));
   }
 
   join(message, socket) {
-    console.log("joining the race");
+    console.log("joining the race", message.hash);
     socket.on('message', function incoming(message) {
       message = JSON.parse(message);
       switch(message.message) {
         case 'playerinput':
-          console.log("received player input", message);
+          console.log("received player input from", message.username);
           break;
         default:
           break;
       }
     });
-
     this._attendees.push(socket);
   }
 
@@ -85,10 +98,21 @@ class Race {
   spectate(message, socket) {
     // Do not handle player inputs from spectators,
     // only send other players data to them
-    this._spectators[socket.uuid] = socket;
+    this._spectators.push(socket);
+  }
+
+  getPlayers() {
+    var players = [];
+    for(let player in this._attendees) {
+      players.push({
+        username: player.username
+      })
+    }
+    return players;
   }
 
   _multicast(data, playerList) {
+    // Synchronise attendees
     for(const player in playerList) {
       if(playerList[player].readyState === WebSocket.OPEN) {
         playerList[player].send(JSON.stringify(data));

@@ -60,6 +60,7 @@ class Lobby {
     switch(message.type) {
       case 'join':
         //this._races[0].join(message, socket);
+        this._joinRace(message, socket);
         break;
       case 'spectate':
         this._spectateRace(message, socket);
@@ -76,30 +77,43 @@ class Lobby {
     }
   }
 
+  _joinRace(message, socket) {
+    for(let race in this._races) {
+      console.log("race", this._races[race]);
+      if (message.hash == this._races[race]._uuid) {
+        console.log("race", message.hash, "found, joining it immediately");
+        message.response = true;
+        this._races[race].join(message, socket);
+      }
+    }
+    socket.send(JSON.stringify(message));
+  }
+
   _spectateRace(message, socket) {
     message.response = false;
     for(let race in this._races) {
-      if(this._races[race].hash === message.hash) {
+      if (message.hash == this._races[race]._uuid) {
         message.response = true;
         console.log("found race, proceeding");
         this._races[race].spectate(message, socket);
       }
     }
+    socket.send(JSON.stringify(message));
   }
 
   _createRace(message, socket) {
     message.response = false;
     try {
       var track = require('../model/tracks/' + message['track'] + '.json');
-      console.log("track found, proceeding");
+      console.log("track found, proceeding for sid", socket.player.sid);
       message.response = true;
       let race = new Race(message, socket);
-      this._races.push(race._uuid);
+      this._races[socket.player.sid] = race;
     }
     catch (e) {
       console.log("track'" + message.track + "' not found", e);
     }
-    console.log("returning message")
+    console.log("returning message");
     socket.send(JSON.stringify(message));
   }
 
@@ -108,9 +122,10 @@ class Lobby {
     let races = [];
     for(let race in this._races) {
       races.push({
-        "initiator": this._races[race].initiator,
-        "track": this._races[race].track,
-        "hash": this._races[race]._uuid
+        "initiator": this._races[race]._initiator,
+        "track": this._races[race]._track,
+        "hash": this._races[race]._uuid,
+        "players": this._races[race].getPlayers()
     });
     }
     message.races = races;
