@@ -16,7 +16,7 @@ class Lobby {
 
   initProto() {
     console.log("INITIALIZED FREE-FOR-ALL DRIVING, REMOVE THIS AFTERWARDS!")
-     this._races[0] = new Race();
+    //this._races[0] = new Race();
   }
 
   join(socket) {

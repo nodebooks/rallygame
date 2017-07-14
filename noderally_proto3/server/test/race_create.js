@@ -21,7 +21,7 @@ ws.on('open', function () {
             username: "player1",
             type: "create",
             track: "example", // Create a race with a specific map specified in model/tracks/*
-            hash: matchId
+            hash: ""
         }));
     }, 1000);
 });

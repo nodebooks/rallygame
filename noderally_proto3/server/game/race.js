@@ -27,6 +27,7 @@ class Race {
 
   _init(message, socket) {
 
+    message.hash = this._uuid;
     let frame = 0;
     // Join to race
     if(socket) {
