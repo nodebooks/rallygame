@@ -140,10 +140,9 @@ class Race {
     for(const player in this._attendees) {
       if(this._attendees[player].readyState === WebSocket.OPEN) {  
         this._attendees[player].send(JSON.stringify({
-        // TODO: set points / vectors here
         'username': this._attendees[player].player.username,
-        'location': {x, y},
-        'velocity': {x, y}
+        'location': {"x": x, "y": y},
+        'velocity': {"x": x, "y": y}
         }));
       }
     }
