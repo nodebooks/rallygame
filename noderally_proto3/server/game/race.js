@@ -28,12 +28,9 @@ class Race {
 
   _init(message, socket) {
     message.hash = this._uuid;
-    if(socket) {
-      this._attendees.push(socket);
-    }
-    else {
-      console.log("socket not defined, expecting this to be initiated by server");
-    }
+
+    // Make player also join the race
+    this.join(message, socket);
   }
 
   _start(syncInterval, attendees, spectators, uuid) {
@@ -88,7 +85,7 @@ class Race {
   }
 
   join(message, socket) {
-    console.log("joining the race", message.hash);
+    console.log("player", socket.player.username, "is joining the race", message.hash);
     socket.on('message', function incoming(message) {
       message = JSON.parse(message);
       switch(message.message) {
