@@ -71,6 +71,9 @@ class Lobby {
       case 'list':
         this._listRaces(message, socket);
         break;
+      case 'end_debug':
+        this._endRace(message,socket);
+        break;
       default:
         console.log("undefined race type", message.type);
         break;
@@ -132,6 +135,10 @@ class Lobby {
     message.response = true;
 
     socket.send(JSON.stringify(message));
+  }
+
+  _endRace(message, socket) {
+    
   }
 }
 

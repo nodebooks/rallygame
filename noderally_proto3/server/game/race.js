@@ -10,6 +10,8 @@
 const uuid = require('uuid4');
 const WebSocket = require('ws');
 
+let raceHandle = undefined;
+
 class Race {
   constructor(message, socket) {
     this._initiator = socket ? socket.player.username : "server demo";
@@ -21,6 +23,7 @@ class Race {
     this._started = new Date().getTime();  // Total duration
     this._length = 360; // Max duration in seconds
     this._syncInterval = 1000;
+    this._syncInt = undefined;
     this._maxPlayers = 2;
 
     this._init(message, socket);
@@ -28,6 +31,7 @@ class Race {
 
   _init(message, socket) {
     message.hash = this._uuid;
+    raceHandle = this;
 
     // Make player also join the race
     this.join(message, socket);
@@ -38,7 +42,7 @@ class Race {
 
     let frame = 0;
 
-    let interval = setInterval(function (players, spectators, hash) {
+    raceHandle._syncInt = setInterval(function (players, spectators, hash) {
       var playerstatuses = []; 
       for(const player in players) {
         playerstatuses.push(players[player].player);
@@ -71,8 +75,11 @@ class Race {
     }, syncInterval, attendees, spectators, uuid);
   }
 
-  _end() {
-    console.log("race finished in %s seconds", this.duration);
+  _end(message) {
+    console.log("race interval cleared", raceHandle);
+    clearInterval(raceHandle._syncInt);
+    raceHandle._multicast({"message":"race", "type": "end", "hash": raceHandle._uuid}, raceHandle._attendees);
+    raceHandle._multicast({"message":"race", "type": "end", "hash": raceHandle._uuid}, raceHandle._spectators);
   }
 
   _multicast(data, playerList) {
@@ -92,6 +99,11 @@ class Race {
         case 'playerinput':
           console.log("received player input from", message.username);
           break;
+        case 'race':
+          if(message.type === 'end_debug') {
+            raceHandle._end(message);
+            console.log("-- race ended --");
+          }
         default:
           break;
       }
