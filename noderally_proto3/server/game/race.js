@@ -15,27 +15,31 @@ class Race {
     this._initiator = socket ? socket.player.username : "server demo";
     this._track = message ? ((message.track) ? message.track : "example") : "example";
     this._uuid = message ? ((message.hash) ? message.hash : uuid()) : uuid();
-    this._attendees = new Array(10);
-    this._spectators = new Array(100);
+    this._attendees = new Array();
+    this._spectators = new Array();
 
     this._started = new Date().getTime();  // Total duration
     this._length = 360; // Max duration in seconds
     this._syncInterval = 1000;
+    this._maxPlayers = 2;
 
     this._init(message, socket);
   }
 
   _init(message, socket) {
-
     message.hash = this._uuid;
-    let frame = 0;
-    // Join to race
     if(socket) {
       this._attendees.push(socket);
     }
     else {
       console.log("socket not defined, expecting this to be initiated by server");
     }
+  }
+
+  _start(syncInterval, attendees, spectators, uuid) {
+    console.log("starting new race", this._uuid);
+
+    let frame = 0;
 
     let interval = setInterval(function (players, spectators, hash) {
       var playerstatuses = []; 
@@ -67,9 +71,20 @@ class Race {
         }
       }
       frame++;
-    }, this._syncInterval, this._attendees, this._spectators, this._uuid);
+    }, syncInterval, attendees, spectators, uuid);
+  }
 
-    //console.log("created new race", JSON.stringify(this));
+  _end() {
+    console.log("race finished in %s seconds", this.duration);
+  }
+
+  _multicast(data, playerList) {
+    // Synchronise attendees
+    for(const player in playerList) {
+      if(playerList[player].readyState === WebSocket.OPEN) {
+        playerList[player].send(JSON.stringify(data));
+      }
+    }
   }
 
   join(message, socket) {
@@ -85,14 +100,13 @@ class Race {
       }
     });
     this._attendees.push(socket);
-  }
 
-  _start() {
-    console.log("new race started");
-  }
-
-  _end() {
-    console.log("race finished in %s seconds", this.duration);
+    // TODO: proper join & start
+    if(this._attendees.length === this._maxPlayers) {
+      console.log("all players joined, ready to start race");
+      let raceStart = setTimeout(this._multicast, 1000, {"message":"race", "type":"start", "hash": this._uuid}, this._attendees);
+      let gameSync = setTimeout(this._start, 3000, this._syncInterval, this._attendees, this._spectators, this._uuid);
+    }
   }
 
   spectate(message, socket) {
@@ -104,20 +118,9 @@ class Race {
   getPlayers() {
     var players = [];
     for(let player in this._attendees) {
-      players.push({
-        username: player.username
-      })
+      players.push({ username: this._attendees[player].player.username });
     }
     return players;
-  }
-
-  _multicast(data, playerList) {
-    // Synchronise attendees
-    for(const player in playerList) {
-      if(playerList[player].readyState === WebSocket.OPEN) {
-        playerList[player].send(JSON.stringify(data));
-      }
-    }
   }
 
   handleMessage(message, socket) {

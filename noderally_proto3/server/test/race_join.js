@@ -49,7 +49,6 @@ ws.on('message', function (message) {
     let msg = JSON.parse(message)
     console.log("got message", msg);
     if(msg.message === 'race') {
-        console.log("ready to race");
         if(msg.type === 'list') {
             console.log("found race", msg.track, "with hash", msg.races[0].hash);
             hash = msg.races[0].hash;

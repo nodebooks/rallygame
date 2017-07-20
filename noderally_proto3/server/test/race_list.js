@@ -32,5 +32,15 @@ ws.on('error', function (err) {
 });
 
 ws.on('message', function (message) {
-    console.log("got message", JSON.parse(message));    
+    console.log("got message", JSON.parse(message));
+    var msg = JSON.parse(message);
+    if(msg.message === 'race') {
+        if(msg.type === 'list') {
+            for(let race in msg.races) {
+                for (let player in msg.races[race].players) {
+                    console.log(msg.races[race].players[player]);
+                }
+            }
+        }
+    }
 });

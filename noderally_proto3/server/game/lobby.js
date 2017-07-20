@@ -79,7 +79,7 @@ class Lobby {
 
   _joinRace(message, socket) {
     for(let race in this._races) {
-      console.log("race", this._races[race]);
+      //console.log("race", this._races[race]);
       if (message.hash == this._races[race]._uuid) {
         console.log("race", message.hash, "found, joining it immediately");
         message.response = true;
