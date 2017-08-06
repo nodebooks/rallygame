@@ -45,6 +45,9 @@ class Lobby {
       case 'race':
         this._race(message, socket);
         break;
+      case 'loadtrack':
+        this._loadTrack(message, socket);
+        break;
       default:
         break;
     }
@@ -89,6 +92,13 @@ class Lobby {
         this._races[race].join(message, socket);
       }
     }
+    socket.send(JSON.stringify(message));
+  }
+
+  _loadTrack(message, socket) {
+    //TODO: error handling for 'track not found'
+    message.track = require('../model/tracks/' + message.trackname);
+    message.response = true;
     socket.send(JSON.stringify(message));
   }
 

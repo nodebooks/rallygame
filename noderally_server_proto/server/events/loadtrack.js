@@ -39,7 +39,7 @@ module.exports = function (message, handle, callback) {
   function executeEvent(message, callback) {
 
     message.track = require('../model/tracks/example');
-    //console.log("loading track", message.track);
+    console.log("loading track", message.track);
     message.response = true;  // Tag true/false (for success/failure)
     //message.reason = "Bad things happened because...";
 

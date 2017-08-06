@@ -7,20 +7,10 @@ ws.on('open', function () {
 
     // Send login message
     ws.send(JSON.stringify({
-        message: "login",
+        message: "newplayer",
         username: "player1",
         password: "test1234",
     }));
-
-    let happen = setTimeout(function() {
-        // Send test message
-        ws.send(JSON.stringify({
-            message: "race",
-            username: "player1",
-            type: "create",
-            track: "example"
-        }));
-    }, 1000);
 });
 
 ws.on('close', function () {
