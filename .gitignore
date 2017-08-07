@@ -1,2 +1,8 @@
 .DS_Store
 **/node_modules
+client/noderally/Binaries
+client/noderally/DerivedDataCache/
+client/noderally/Intermediate/
+client/noderally/Saved/
+client/noderally/Release/
+
