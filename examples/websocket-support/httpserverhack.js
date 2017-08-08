@@ -48,7 +48,7 @@ server.on('upgrade', function(req, socket, head){
         + "\r\n");
 
     socket.on('data', function(data, start, end){
-      console.log("data:", data)
+      console.log("data:", data);
     });
 });
 
