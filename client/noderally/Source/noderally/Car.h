@@ -27,4 +27,42 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="CarControls")
+  float  throttle;
+  
+  UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="CarControls")
+  float  maxThrottle;
+  
+  UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="CarControls")
+  float  maxSpeed;
+
+  UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="CarControls")
+  float  turningSpeed;
+  
+  UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="CarControls")
+  float  maxTurningSpeed;
+  
+  UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="CarControls")
+  float drift;
+  
+  UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="CarControls")
+  float breakFactor;
+  
+  UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="CarControls")
+  float slowDownFactor;
+  
+  FVector   velocity;
+
+  bool isThrottling;
+
+  bool isBreaking;
+  
+	UFUNCTION(BlueprintCallable)
+  void Accelerate(float AxisValue);
+
+  UFUNCTION(BlueprintCallable)
+  void Deaccelerate(float AxisValue);
+
+  UFUNCTION(BlueprintCallable)
+  void Turn( float AxisValue);
 };
