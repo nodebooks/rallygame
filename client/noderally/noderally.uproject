@@ -2,5 +2,15 @@
 	"FileVersion": 3,
 	"EngineAssociation": "{3623CF4A-2101-0004-000F-02359E15BDF6}",
 	"Category": "",
-	"Description": ""
+	"Description": "",
+	"Modules": [
+		{
+			"Name": "noderally",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine"
+			]
+		}
+	]
 }
