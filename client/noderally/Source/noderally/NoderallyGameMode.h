@@ -12,7 +12,7 @@
  * 
  */
 UCLASS()
-class NODERALLY_API ANoderallyGameMode : public AGameModeBase
+class NODERALLY_API ANoderallyGameMode : public AGameModeBase, public IReceiver
 {
 	GENERATED_BODY()
 public:
@@ -28,6 +28,7 @@ public:
   UFUNCTION(BlueprintCallable)
   void DisconnectWebsocket();
   
+  void OnReceive( const std::string & msg ) override;
  
 
 };

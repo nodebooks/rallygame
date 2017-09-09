@@ -19,7 +19,8 @@ ANoderallyGameMode::ConnectWebsocket()
     
     _wsRunnable = new WebsocketRunnable(url);
     _wsRunnable->StartThread();
-    
+    // Set receiver
+    _wsRunnable->_websocket->SetReceiver(this);
    
     UE_LOG(WebsocketLog, Warning, TEXT("good to go!"));
   } 
@@ -38,3 +39,8 @@ ANoderallyGameMode::DisconnectWebsocket()
   _wsRunnable = nullptr;
 }
 
+void
+ANoderallyGameMode::OnReceive(const std::string& msg)
+{
+	UE_LOG(WebsocketLog, Warning, TEXT("Unhandled websocket message:%s"), *FString(msg.c_str()));
+}
