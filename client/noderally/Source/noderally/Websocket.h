@@ -5,7 +5,8 @@
 #include "CoreMinimal.h"
 #include <string>
 #include <libwebsockets.h>
-
+#include <mutex>
+#include <list>
 
 class IReceiver 
 {
@@ -30,14 +31,23 @@ private:
   
   
 public:
-
+  std::mutex              _data_mutex;		//< This will guard data changes by threads.
+  std::string             _data;              //< This is what will be sent.
+  std::list<std::string>  _received;			//< This is what we will receive.
+  std::string             _receiveCombined;   //< Here we will combine messages
   
-	 Websocket();
-   virtual ~Websocket();
+  Websocket();
+  virtual ~Websocket();
    
-   static const int DEFAULT_PORT = 1337;
-   void Connect(const std::string & url);
-   void Process( int polldelay);
+  static const int DEFAULT_PORT = 1337;
+  void Connect(const std::string & url);
+  void Process( int polldelay);
    
-
+  void        SetReceiver( IReceiver * receiver );
+  IReceiver * GetReceiver();
+  
+  void ResetReceive();
+  
+  void Send( const std::string & msg );
+  
 };

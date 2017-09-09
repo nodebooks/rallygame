@@ -30,10 +30,57 @@ namespace
       break;
     case LWS_CALLBACK_RECEIVE:
       break;
-    
+    case LWS_CALLBACK_CLIENT_RECEIVE:
+      {
+          
+        IReceiver * receiver = socket->GetReceiver();
+        size_t remaining = lws_remaining_packet_payload(ws);
 
-      
-    
+        if ( receiver )
+        {
+          socket->_received.push_back(string((char *)in));
+          // When receiving data from server
+          if ( remaining == 0 ) 
+          {    
+            bool isFinal = lws_is_final_fragment(ws);
+            if ( isFinal )
+            {
+              socket->ResetReceive();
+              receiver->OnReceive(socket->_receiveCombined);
+              socket->_receiveCombined.clear();
+            }
+          }
+        }        
+      }
+    break;
+      case LWS_CALLBACK_CLIENT_WRITEABLE:
+      {
+        // Access data in Websocket (make a copy)
+        socket->_data_mutex.lock();
+        string tmp = socket->_data;
+        socket->_data_mutex.unlock();  
+        string msg;
+        // convert into UTF-8
+        utf8::replace_invalid(tmp.begin(), tmp.end(), back_inserter(msg));
+        // construct send buffer
+        char * buf = new char[LWS_SEND_BUFFER_PRE_PADDING +
+                              msg.length() + 
+                              LWS_SEND_BUFFER_POST_PADDING ]; 
+
+        // copy data to be sent into send buffer
+        strncpy(&buf[LWS_SEND_BUFFER_PRE_PADDING], msg.c_str(), msg.length());
+        // Write into websocket
+        int n = lws_write(ws,
+                 (unsigned char *)&buf[LWS_SEND_BUFFER_PRE_PADDING],
+                 msg.length(), LWS_WRITE_TEXT); 
+        // Check if there were problems
+        if ( n < 0 )					throw runtime_error("Not able to write");
+        else if ( n <  msg.length() )   throw runtime_error("Partial write");
+         
+
+        delete [] buf;
+      }
+      break;
     default:
       break;
     }
@@ -125,3 +172,35 @@ Websocket::Process(int polldelay)
 	lws_service(_context, polldelay);
 }
 
+void
+Websocket::SetReceiver(IReceiver *receiver)
+{
+  _receiver = receiver;
+}
+
+IReceiver *
+Websocket::GetReceiver()
+{
+  return _receiver;
+}
+
+void 
+Websocket::ResetReceive()
+{
+  _data_mutex.lock();
+  _receiveCombined.clear();
+  for( auto & s: _received )
+    _receiveCombined += s; 
+  _received.clear();
+  _data_mutex.unlock();
+}
+
+void
+Websocket::Send( const std::string & msg )
+{
+  _data_mutex.lock();
+  _data = msg;
+  _data_mutex.unlock();
+  
+  lws_callback_on_writable(_ws);
+}
