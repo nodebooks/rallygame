@@ -8,6 +8,19 @@
 #include "WebsocketRunnable.h"
 #include "NoderallyGameMode.generated.h"
 
+USTRUCT(BlueprintType)
+struct FPlayerAuth 
+{
+    GENERATED_BODY()
+    
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FString username;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FString password;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FString reason; 
+    
+};
 /**
  * 
  */
@@ -15,6 +28,10 @@ UCLASS()
 class NODERALLY_API ANoderallyGameMode : public AGameModeBase, public IReceiver
 {
 	GENERATED_BODY()
+  
+protected:  
+  void SendWithWebsocket( TSharedRef<FJsonObject> & json) const;
+  
 public:
   UPROPERTY(EditAnywhere,BlueprintReadWrite)
   FString host;
@@ -30,6 +47,16 @@ public:
   
   void OnReceive( const std::string & msg ) override;
  
+  UFUNCTION(BlueprintCallable)
+  void Authenticate(  const FPlayerAuth & playerAuth );
+  
+  /// Events 
+  
+  UFUNCTION(BlueprintNativeEvent)
+  void OnPlayerAuthenticationSuccess( const FPlayerAuth & auth ) ;
 
+  /// Called when authentication fails.
+  UFUNCTION(BlueprintNativeEvent)
+  void OnPlayerAuthenticationFail( const FPlayerAuth & auth ) ;
 };
 
