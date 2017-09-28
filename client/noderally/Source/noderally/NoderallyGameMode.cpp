@@ -78,7 +78,7 @@ ANoderallyGameMode::OnReceive(const std::string& msg)
     (*auth).username = TCHAR_TO_UTF8(*jsonObject->GetStringField(TEXT("username")));
     if ( result )
     {
-      AsyncTask(ENamedThreads::GameThread, [this,&auth]() {
+      AsyncTask(ENamedThreads::GameThread, [this,auth]() {
         this->OnPlayerAuthenticationSuccess(*auth);      
       });
     }
@@ -88,7 +88,7 @@ ANoderallyGameMode::OnReceive(const std::string& msg)
       {
         auth->reason = tmp;
       }
-      AsyncTask(ENamedThreads::GameThread, [this,&auth]() {
+      AsyncTask(ENamedThreads::GameThread, [this,auth]() {
         this->OnPlayerAuthenticationFail(*auth);      
       });  
     }
