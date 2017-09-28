@@ -1,0 +1,80 @@
+<html>
+  <head>
+    <title>Rallygame UML charts</title>
+    <meta charset="UTF-8">  
+    <script src="js/raphael-min.js"></script>
+    <script src="js/underscore-min.js"></script>
+    <script src="js/sequence-diagram-min.js"></script>
+    <script src="js/jquery-2.1.3.js"></script>
+
+    <script type="text/javascript">
+      function getUmlData() {
+        var time = Date.now();
+        var jqxhr = $.get( "/getuml", function(data) {
+          var tmp = JSON.parse(data);
+          var umldata = [];
+
+          for (var x in tmp) {
+            umldata += "Client-->Server: " + tmp[x].r + "\n";
+            umldata += "Server-->Client: " + tmp[x].r + "\n";
+            umldata += "Note right of Client: " + tmp[x].tth + " ms\n";
+          }
+
+          document.getElementById('diagram').innerHTML = "";
+          
+          var diagram = Diagram.parse(umldata);
+          diagram.drawSVG("diagram", {theme: 'simple'});
+
+        })
+          .done(function() {
+          })
+          .fail(function() {
+            alert( "error" );
+          })
+          .always(function() {
+          });
+      }
+
+      function startWebsocket() {
+        console.log("starting up websocket");
+
+        var ws = new WebSocket("ws://127.0.0.1:8080");
+
+        ws.onopen = function (event) {
+          console.log("websocket opened", ws);
+          document.getElementById('pagedata').innerHTML = "websocket connected";
+
+          
+          // Send a control message as a JSON-formatted string.
+          var msg = {
+            message: 'login',
+            username: "jvanhalen",
+            password: "¿hello world?"
+          };
+
+          ws.send(JSON.stringify(msg));
+          
+          setTimeout(function() {
+            console.log("asdfasfa");
+            ws.send("Hello world!");
+          }, 1000);
+          
+        };
+
+        ws.onmessage = function (event) {
+          console.log("data:", event.data);
+        };
+
+        ws.onclose = function() {
+          console.log("connection closed");
+          document.getElementById('pagedata').innerHTML = "websocket disconnected";
+        };
+      }
+    </script>
+  </head>
+  <body onload="startWebsocket()">
+    <p id="pagedata">Trying to connect websocket...</p>
+    <p><button id="getumldata" onclick="getUmlData()">Get UML data</button>
+    <div id="diagram"></div>
+  </body>
+</html>

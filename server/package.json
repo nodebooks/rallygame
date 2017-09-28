@@ -1,0 +1,35 @@
+{
+  "name": "microtasker",
+  "version": "0.0.1",
+  "description": "Multicore microservice platform",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nodebooks/microtasker.git"
+  },
+  "keywords": [
+    "noderally",
+    "node.js",
+    "nodejs"
+  ],
+  "author": "Jaakko Vanhala",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nodebooks/microtasker/issues"
+  },
+  "homepage": "https://github.com/nodebooks/microtasker#readme",
+  "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
+    "mongoose": "^4.11.1",
+    "passport": "^0.3.2",
+    "passport-local": "^1.0.0",
+    "uuid4": "^1.0.0",
+    "ws": "^3.0.0"
+  },
+  "devDependencies": {
+    "mocha": "^3.4.2"
+  }
+}
