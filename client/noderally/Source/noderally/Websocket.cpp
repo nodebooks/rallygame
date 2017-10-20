@@ -21,12 +21,22 @@ namespace
     switch( reason )
     {
     case LWS_CALLBACK_CLIENT_ESTABLISHED:
-      UE_LOG(WebsocketLog, Log, TEXT("Established connection"));
+      {
+        IReceiver * receiver = socket->GetReceiver();
+      
+        receiver->OnReceive("{ \"message\": \"connection_established\" }");
+        
+        UE_LOG(WebsocketLog, Log, TEXT("Established connection"));
+      }
       break;
     case LWS_CALLBACK_CLOSED:
       break;
     case LWS_CALLBACK_CLIENT_CONNECTION_ERROR:
-      UE_LOG(WebsocketLog, Log, TEXT("Connection Fail"));
+      {
+        IReceiver * receiver = socket->GetReceiver();
+        receiver->OnReceive("{ \"message\": \"connection_fail\" }");
+        UE_LOG(WebsocketLog, Log, TEXT("Connection Fail"));
+      }
       break;
     case LWS_CALLBACK_RECEIVE:
       break;
