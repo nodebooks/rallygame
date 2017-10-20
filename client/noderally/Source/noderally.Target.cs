@@ -8,7 +8,7 @@ public class noderallyTarget : TargetRules
 	public noderallyTarget(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Game;
-
+    bForceEnableExceptions = true;
 		ExtraModuleNames.AddRange( new string[] { "noderally" } );
 	}
 }
