@@ -8,7 +8,7 @@ public class noderally : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "libWebSockets" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "libWebSockets", "Paper2D" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
