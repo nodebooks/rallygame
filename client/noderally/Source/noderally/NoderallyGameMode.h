@@ -2,7 +2,15 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+
+#include <Core.h>
+#include <CoreMisc.h>
+#include <CoreMinimal.h>
+#include <UObjectGlobals.h>
+#include <PaperTileMapActor.h>
+#include <PaperTileSet.h>
+#include <PaperTileMapComponent.h>
+#include "GameFramework/Actor.h"
 #include "GameFramework/GameModeBase.h"
 #include "Websocket.h"
 #include "WebsocketRunnable.h"
@@ -21,6 +29,19 @@ struct FPlayerAuth
     FString reason; 
     
 };
+
+USTRUCT()
+struct FNoderallyBlueprintTypes
+{
+  GENERATED_BODY()
+  
+  static UClass * TerrainOffTrack;
+  static UClass * TerrainBlock;
+  
+  FNoderallyBlueprintTypes();
+  
+};
+
 /**
  * 
  */
@@ -33,19 +54,24 @@ protected:
   void SendWithWebsocket( TSharedRef<FJsonObject> & json) const;
   
 public:
+
+  ANoderallyGameMode();
+
   UPROPERTY(EditAnywhere,BlueprintReadWrite)
   FString host;
   UPROPERTY(EditAnywhere,BlueprintReadWrite)
   int     serverPort;
   
   WebsocketRunnable * _wsRunnable{nullptr};
-  
+ 
   UFUNCTION(BlueprintCallable)
   void ConnectWebsocket();
   UFUNCTION(BlueprintCallable)
   void DisconnectWebsocket();
   
   void OnReceive( const std::string & msg ) override;
+ 
+  void RegenerateTrack( TSharedPtr<FJsonObject> track );
  
   UFUNCTION(BlueprintCallable)
   void Authenticate(  const FPlayerAuth & playerAuth );
@@ -58,5 +84,14 @@ public:
   /// Called when authentication fails.
   UFUNCTION(BlueprintNativeEvent)
   void OnPlayerAuthenticationFail( const FPlayerAuth & auth ) ;
+  
+  UFUNCTION(BlueprintNativeEvent)
+  void OnConnectionFailed();
+  
+  UFUNCTION(BlueprintNativeEvent)
+  void OnConnectionEstablished();
+  
+  UFUNCTION(BlueprintCallable)
+  bool LoadTrack() ;
 };
 
