@@ -18,7 +18,7 @@ ACar::ACar()
 void ACar::BeginPlay()
 {
 	Super::BeginPlay();
-	
+  isOnDirt = false;
 }
 
 // Called every frame
@@ -43,7 +43,19 @@ void ACar::Tick(float DeltaTime)
         velocity -= slowDown;
     } 
   }
-  
+  // put cap to how fast car moves off-track
+  if ( isOnDirt )
+  {
+    if ( velocity.SizeSquared() > 0.0f ) {
+	
+      FVector dirtSlowDown = (velocity * (dirtFactor / velocity.SizeSquared()) * DeltaTime);
+      if (dirtSlowDown.SizeSquared() > velocity.SizeSquared())
+        velocity = velocity.GetClampedToMaxSize(maxSpeedOnDirt);
+      else
+        velocity-=dirtSlowDown;
+    }
+  }
+
   FVector fwdVelocity     = GetActorForwardVector() * (velocity | GetActorForwardVector());
   FVector lateralVelocity = GetActorRightVector() * (velocity | GetActorRightVector());
   // lateral velocity decreases over time.

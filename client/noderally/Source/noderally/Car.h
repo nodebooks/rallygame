@@ -51,12 +51,19 @@ public:
   UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="CarControls")
   float slowDownFactor;
   
+  UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="CarControls")
+	float maxSpeedOnDirt;
+  
+  UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="CarControls")
+	float dirtFactor;
+  
   FVector   velocity;
 
   bool isThrottling;
 
   bool isBreaking;
   
+  bool isOnDirt;
 	UFUNCTION(BlueprintCallable)
   void Accelerate(float AxisValue);
 
