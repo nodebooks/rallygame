@@ -314,12 +314,13 @@ ANoderallyGameMode::RegenerateTrack( TSharedPtr<FJsonObject> track )
               TSharedPtr<FJsonObject> obj = spawnpoint->AsObject();
               float tmpX = obj->GetNumberField("x");
               float tmpY = obj->GetNumberField("y");
+              float tmpWidth = obj->GetNumberField("width");
               FString tmpName = obj->GetStringField("name");
               
               FActorSpawnParameters spawnParams;
               
               ATargetPoint *startPosition = GetWorld()->SpawnActor<ATargetPoint>(spawnParams);
-              startPosition->SetActorLocation(FVector(tmpX,tmpY,0.0));
+              startPosition->SetActorLocation(FVector(tmpX+tmpWidth*0.5,tmpY+tmpWidth*0.5,0.0));
               startPosition->Tags.Add(FName(*tmpName));
               
           }
