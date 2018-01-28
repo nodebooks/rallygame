@@ -165,7 +165,9 @@ void ANoderallyGameMode::OnConnectionFailed_Implementation()
 bool ANoderallyGameMode::LoadTrack() 
 {
   FString track;
-  if ( FFileHelper::LoadFileToString(track, TEXT("/home/entity/workdir/noderally/assets/noderally-basetrack.json"), 0) )
+  if ( FFileHelper::LoadFileToString(track, 
+                                    TEXT("/home/entity/workdir/noderally/assets/noderally-basetrack.json"), 
+                                    (FFileHelper::EHashOptions)0 ))
   {
     TSharedPtr<FJsonObject> jsonObject(new FJsonObject);
     TSharedRef<TJsonReader<>> reader = TJsonReaderFactory<>::Create(track);
