@@ -42,6 +42,14 @@ struct FNoderallyBlueprintTypes
   
 };
 
+// Server reply data to measure delay.
+struct ServerReplyData 
+{
+    uint32 timestamp; // Epoch value
+    uint32 sequence; // logical value
+    FString message; // message type
+    bool valid{false}; 
+};
 /**
  * 
  */
@@ -52,7 +60,8 @@ class NODERALLY_API ANoderallyGameMode : public AGameModeBase, public IReceiver
   
 protected:  
   void SendWithWebsocket( TSharedRef<FJsonObject> & json) const;
-  
+  ServerReplyData serverReplyData;
+  void SendServerReply();
 public:
 
   ANoderallyGameMode();

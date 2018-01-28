@@ -89,6 +89,14 @@ ANoderallyGameMode::OnReceive(const std::string& msg)
   FJsonSerializer::Deserialize(reader, jsonObject);
   FString message = jsonObject->GetStringField(TEXT("message"));
   
+  // try to parse timestamp and sequence 
+  if ( jsonObject->TryGetNumberField(TEXT("timestamp"), serverReplyData.timestamp) && 
+       jsonObject->TryGetNumberField(TEXT("s"),         serverReplyData.sequence)     )
+  {
+      serverReplyData.valid = true;
+      serverReplyData.message = message;
+      SendServerReply();
+  } else serverReplyData.valid = false;
   
   if ( message == "login" )
   {
@@ -142,6 +150,18 @@ void ANoderallyGameMode::Authenticate( const FPlayerAuth& playerAuth)
     
   SendWithWebsocket(json);
   
+}
+
+void
+ANoderallyGameMode::SendServerReply()
+{
+  TSharedRef<FJsonObject> json = MakeShareable(new FJsonObject());
+  
+  json->SetStringField("message", serverReplyData.message);
+  json->SetNumberField("s", serverReplyData.sequence);
+  json->SetNumberField("timestamp", serverReplyData.timestamp);
+    
+  SendWithWebsocket(json); 
 }
 
 void ANoderallyGameMode::OnPlayerAuthenticationSuccess_Implementation(const FPlayerAuth& auth)
