@@ -114,6 +114,29 @@ ANoderallyGameMode::OnReceive(const std::string& msg)
       });  
     }
   }
+  else if ( message == "newplayer")
+  {
+    FString tmp;
+    TSharedPtr<FPlayerAuth> auth(new FPlayerAuth);
+    bool result = jsonObject->GetBoolField(TEXT("response"));
+    (*auth).username = TCHAR_TO_UTF8(*jsonObject->GetStringField(TEXT("username")));
+    if ( result )
+    {
+      AsyncTask(ENamedThreads::GameThread, [this,auth]() {
+        this->OnNewPlayerSuccess(*auth);      
+      });
+    }
+    else
+    {
+      if ( jsonObject->TryGetStringField(TEXT("reason"), tmp) )
+      {
+        auth->reason = tmp;
+      }
+      AsyncTask(ENamedThreads::GameThread, [this,auth]() {
+        this->OnNewPlayerFail(*auth);      
+      });  
+    }
+  }
   else if ( message == "connection_fail")
   {
     AsyncTask(ENamedThreads::GameThread, [this]() {
@@ -144,11 +167,31 @@ void ANoderallyGameMode::Authenticate( const FPlayerAuth& playerAuth)
   
 }
 
+void ANoderallyGameMode::NewPlayer( const FPlayerAuth& playerAuth)
+{
+  TSharedRef<FJsonObject> json = MakeShareable(new FJsonObject());
+  
+  json->SetStringField("message", "newplayer");
+  json->SetStringField("username", playerAuth.username);
+  json->SetStringField("password", playerAuth.password);
+    
+  SendWithWebsocket(json);
+  
+}
+
 void ANoderallyGameMode::OnPlayerAuthenticationSuccess_Implementation(const FPlayerAuth& auth)
 {
 }
 
 void ANoderallyGameMode::OnPlayerAuthenticationFail_Implementation(const FPlayerAuth& auth)
+{
+}
+
+void ANoderallyGameMode::OnNewPlayerSuccess_Implementation(const FPlayerAuth& auth)
+{
+}
+
+void ANoderallyGameMode::OnNewPlayerFail_Implementation(const FPlayerAuth& auth)
 {
 }
 

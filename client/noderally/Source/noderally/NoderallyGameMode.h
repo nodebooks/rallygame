@@ -76,6 +76,9 @@ public:
   UFUNCTION(BlueprintCallable)
   void Authenticate(  const FPlayerAuth & playerAuth );
   
+  UFUNCTION(BlueprintCallable)
+  void NewPlayer( const FPlayerAuth & playerAuth );
+
   /// Events 
   
   UFUNCTION(BlueprintNativeEvent)
@@ -86,12 +89,18 @@ public:
   void OnPlayerAuthenticationFail( const FPlayerAuth & auth ) ;
   
   UFUNCTION(BlueprintNativeEvent)
+  void OnNewPlayerSuccess( const FPlayerAuth & auth ) ;
+
+  UFUNCTION(BlueprintNativeEvent)
+  void OnNewPlayerFail( const FPlayerAuth & auth ) ;
+  
+  UFUNCTION(BlueprintNativeEvent)
   void OnConnectionFailed();
   
   UFUNCTION(BlueprintNativeEvent)
   void OnConnectionEstablished();
   
   UFUNCTION(BlueprintCallable)
-  bool LoadTrack() ;
+  bool LoadTrack();
 };
 
