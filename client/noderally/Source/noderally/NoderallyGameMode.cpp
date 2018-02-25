@@ -75,7 +75,8 @@ ANoderallyGameMode::ConnectWebsocket()
 void
 ANoderallyGameMode::DisconnectWebsocket()
 {
-  _wsRunnable->RequestExit();
+  // we might not have connected.
+  if ( _wsRunnable ) _wsRunnable->RequestExit();
   delete _wsRunnable;
   _wsRunnable = nullptr;
 }
