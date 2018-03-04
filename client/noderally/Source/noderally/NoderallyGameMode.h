@@ -79,6 +79,8 @@ public:
   UFUNCTION(BlueprintCallable)
   void NewPlayer( const FPlayerAuth & playerAuth );
 
+  UFUNCTION(BlueprintCallable)
+  void SendRaceUpdate(const FPlayerAuth & playerAuth );
   /// Events 
   
   UFUNCTION(BlueprintNativeEvent)

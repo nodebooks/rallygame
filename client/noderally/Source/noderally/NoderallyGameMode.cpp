@@ -7,6 +7,7 @@
 #include <UObject/ConstructorHelpers.h>
 #include <Classes/Components/BoxComponent.h>
 #include <Classes/Engine/TargetPoint.h>
+#include <Car.h>
 using namespace std;
 
 
@@ -178,6 +179,32 @@ void ANoderallyGameMode::NewPlayer( const FPlayerAuth& playerAuth)
     
   SendWithWebsocket(json);
   
+}
+
+void ANoderallyGameMode::SendRaceUpdate( const FPlayerAuth & playerAuth )
+{
+    TSharedRef<FJsonObject> json = MakeShareable(new FJsonObject());
+    TSharedRef<FJsonObject> location = MakeShareable(new FJsonObject());
+    TSharedRef<FJsonObject> velocity = MakeShareable(new FJsonObject());
+    
+    
+    
+    ACar * car = Cast<ACar>(GetWorld()->GetFirstPlayerController()->GetPawn());
+    
+    FVector pos = car->GetActorLocation();
+    FVector vel = car->GetVelocity();
+    
+    location->SetNumberField("x", pos.X);
+    location->SetNumberField("y", pos.Y);
+    velocity->SetNumberField("x", vel.X);
+    velocity->SetNumberField("y", vel.Y);
+    
+    json->SetStringField("username", playerAuth.username);
+    
+    json->SetObjectField("location", location);
+    json->SetObjectField("velocity", velocity);
+    
+    SendWithWebsocket(json);
 }
 
 void ANoderallyGameMode::OnPlayerAuthenticationSuccess_Implementation(const FPlayerAuth& auth)
