@@ -12,6 +12,11 @@ ACar::ACar()
   RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
   MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
   MeshComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+
+  levelMinX = 150.0f;
+  levelMaxX = 1920.0f;
+  levelMinY = 150.0f;
+  levelMaxY = 1180.0f;
 }
 
 // Called when the game starts or when spawned
@@ -62,6 +67,10 @@ void ACar::Tick(float DeltaTime)
   velocity = fwdVelocity + (lateralVelocity * drift);
   FVector newLocation = GetActorLocation();
   newLocation += velocity;
+  // check level limits 
+  newLocation.X = FMath::Clamp(newLocation.X, levelMinX, levelMaxX);
+  newLocation.Y = FMath::Clamp(newLocation.Y, levelMinY, levelMaxY);
+   
   SetActorLocation(newLocation);
   
   FRotator rot = GetActorRotation();
@@ -69,6 +78,7 @@ void ACar::Tick(float DeltaTime)
   SetActorRotation(rot);
   // decrease velocity
   velocity -= velocity * slowDownFactor * DeltaTime;
+  
 }
 
 // Called to bind functionality to input
@@ -81,6 +91,7 @@ void ACar::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 void
 ACar::Accelerate(float AxisValue)
 {
+  
   isThrottling = AxisValue > 0.001f;
 }
 

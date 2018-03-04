@@ -64,6 +64,16 @@ public:
   bool isBreaking;
   
   bool isOnDirt;
+  
+  UPROPERTY(EditAnywhere,BlueprintReadWrite)
+  float levelMinX;
+  UPROPERTY(EditAnywhere,BlueprintReadWrite)
+  float levelMaxX;
+  UPROPERTY(EditAnywhere,BlueprintReadWrite)
+  float levelMinY;
+  UPROPERTY(EditAnywhere,BlueprintReadWrite)
+  float levelMaxY;
+  
 	UFUNCTION(BlueprintCallable)
   void Accelerate(float AxisValue);
 
@@ -72,4 +82,5 @@ public:
 
   UFUNCTION(BlueprintCallable)
   void Turn( float AxisValue);
+  
 };
