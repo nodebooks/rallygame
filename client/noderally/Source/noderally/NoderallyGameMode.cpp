@@ -8,6 +8,13 @@
 #include <Classes/Components/BoxComponent.h>
 #include <Classes/Engine/TargetPoint.h>
 #include <Car.h>
+#include <Classes/GameFramework/GameStateBase.h>
+#include <sstream>
+// required for Paper2D tileset stuff
+#include <PaperTileMapActor.h>
+#include <PaperTileSet.h>
+#include <PaperTileMapComponent.h>
+#include <Classes/Kismet/GameplayStatics.h>
 using namespace std;
 
 
@@ -414,7 +421,9 @@ ANoderallyGameMode::RegenerateTrack( TSharedPtr<FJsonObject> track )
               
               ATargetPoint *startPosition = GetWorld()->SpawnActor<ATargetPoint>(spawnParams);
               startPosition->SetActorLocation(FVector(tmpX+tmpWidth*0.5,tmpY+tmpWidth*0.5,0.0));
+              startPosition->SetActorRotation(FRotator(0.0, 180, 0.0), ETeleportType::None);
               startPosition->Tags.Add(FName(*tmpName));
+              startPosition->Tags.Add(FName("START"));
               
           }
       }
@@ -434,5 +443,72 @@ ANoderallyGameMode::RegenerateTrack( TSharedPtr<FJsonObject> track )
       
     }
   }
+  
+}
+/*
+void 
+ANoderallyGameMode::StartPlay() 
+{
+  GameState->HandleBeginPlay();
+}
+ */
+void
+ANoderallyGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason) 
+{
+    
+}
+
+bool
+ANoderallyGameMode::HasMatchStarted() const
+{
+  UE_LOG(LogTemp, Warning, TEXT("has match started queried from gamemode"));
+    return hasMatchStarted;
+}
+bool 
+ANoderallyGameMode::StartMatch()
+{
+    hasMatchStarted = true;
+    GetWorldSettings()->NotifyMatchStarted();
+    LoadTrack();
+    //ANoderallyGameState * state = GetGameState();
+    //SpawnPlayerController()
+    const int NUM_SIMULATED_NETWORK_PLAYERS = 7;
+    // Create controllers for all players joining in. We already got our local, so 
+    // need seven more
+    for( int i=0;i<NUM_SIMULATED_NETWORK_PLAYERS;i++)
+    {
+      APlayerController * pc = SpawnPlayerController(ENetRole::ROLE_SimulatedProxy, FVector::ZeroVector, FRotator::ZeroRotator);
+      pc->SetName(FString::Printf(TEXT("Player %d"),i));
+    }
+  
+    UE_LOG(LogTemp, Warning, TEXT("Seeing if we have players to span."));
+    
+    TArray<AActor *> spawnPoints;
+    UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName(TEXT("START")), spawnPoints);
+    int count = 0;
+    for( FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator )
+    {
+       
+      UE_LOG(LogTemp, Warning, TEXT("Spawining player..."));
+      APlayerController* PlayerController = Iterator->Get();
+      // Set start spot to what we have in range (start from beginnig if too many players)
+      PlayerController->StartSpot = spawnPoints[count++%spawnPoints.Num()];
+      
+      if ((PlayerController->GetPawn() == nullptr) && PlayerCanRestart(PlayerController))
+      {
+        RestartPlayer(PlayerController);
+      }
+      // Set player<NUM> as tag.
+      TArray<FName> & tags  = PlayerController->GetPawn()->Tags;
+      FString playerTag = FString::Printf(TEXT("player%d"),count);
+      
+      tags.Add(FName(*playerTag));
+      
+    }
+    return hasMatchStarted;
+}
+
+void ANoderallyGameMode::SendNetworkSync()
+{
   
 }

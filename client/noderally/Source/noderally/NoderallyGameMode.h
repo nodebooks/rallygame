@@ -6,6 +6,7 @@
 #include <Core.h>
 #include <CoreMisc.h>
 #include <CoreMinimal.h>
+
 #include <UObjectGlobals.h>
 #include <PaperTileMapActor.h>
 #include <PaperTileSet.h>
@@ -57,11 +58,11 @@ UCLASS()
 class NODERALLY_API ANoderallyGameMode : public AGameModeBase, public IReceiver
 {
 	GENERATED_BODY()
-  
 protected:  
   void SendWithWebsocket( TSharedRef<FJsonObject> & json) const;
   ServerReplyData serverReplyData;
   void SendServerReply();
+  bool hasMatchStarted{false};
 public:
 
   ANoderallyGameMode();
@@ -113,5 +114,25 @@ public:
   
   UFUNCTION(BlueprintCallable)
   bool LoadTrack();
+  
+  //virtual void StartPlay() override;
+  virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+  
+  virtual bool HasMatchStarted() const override;
+  UFUNCTION(BlueprintCallable)
+  bool StartMatch();
+  
+  
+  void SendNetworkSync();
+  /// \TODO
+  /* On Match Start / HandleMatchStart should call RestartPlayer(player controller);.*/
+  /* match state must be set and handling callback executed in game mode.*/
+  
+  // where is player controller created? In Game Mode, with RestartPlayer. 
+  // Needs overriding in GameModeBP in order to make  spawning possible even 
+  // when colliding.
+  // 
+  // player start is defined using AController's StartSpot AActor reference.
+  //   // http://api.unrealengine.com/INT/API/Runtime/Engine/GameFramework/AController/index.html
 };
 
