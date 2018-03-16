@@ -6,6 +6,20 @@
 #include "GameFramework/Pawn.h"
 #include "Car.generated.h"
 
+USTRUCT()
+struct FNetworkData 
+{
+  
+  GENERATED_BODY()
+  // velocity in XY plane
+  float velocityXY[2];
+  // Euler rotation over Z.
+  float rotationAngleZ;
+  
+  bool isThrottling;
+  bool isBreaking;
+};
+
 UCLASS()
 class NODERALLY_API ACar : public APawn
 {
@@ -20,6 +34,9 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+  /// target data position.
+  FNetworkData targetData; 
+  bool bIsNetworkControlled;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -82,5 +99,8 @@ public:
 
   UFUNCTION(BlueprintCallable)
   void Turn( float AxisValue);
+    
+  void OnNetworkSync( FNetworkData & data );
   
+  void HandleDeadReckoning();
 };

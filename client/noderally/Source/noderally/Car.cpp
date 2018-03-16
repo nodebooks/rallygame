@@ -9,10 +9,11 @@ ACar::ACar()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+  bIsNetworkControlled = false;
   RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
   MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
   MeshComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
-
+  
   levelMinX = 150.0f;
   levelMaxX = 1920.0f;
   levelMinY = 150.0f;
@@ -24,6 +25,7 @@ void ACar::BeginPlay()
 {
 	Super::BeginPlay();
   isOnDirt = false;
+  
 }
 
 // Called every frame
@@ -48,6 +50,7 @@ void ACar::Tick(float DeltaTime)
         velocity -= slowDown;
     } 
   }
+  
   // put cap to how fast car moves off-track
   if ( isOnDirt )
   {
@@ -60,7 +63,7 @@ void ACar::Tick(float DeltaTime)
         velocity-=dirtSlowDown;
     }
   }
-
+  
   FVector fwdVelocity     = GetActorForwardVector() * (velocity | GetActorForwardVector());
   FVector lateralVelocity = GetActorRightVector() * (velocity | GetActorRightVector());
   // lateral velocity decreases over time.
@@ -78,6 +81,7 @@ void ACar::Tick(float DeltaTime)
   SetActorRotation(rot);
   // decrease velocity
   velocity -= velocity * slowDownFactor * DeltaTime;
+ 
   
 }
 
@@ -105,4 +109,23 @@ void
 ACar::Turn( float AxisValue)
 {
   turningSpeed = FMath::Clamp(AxisValue, -1.0f, 1.0f)*maxTurningSpeed;
+}
+
+void 
+ACar::OnNetworkSync(FNetworkData& data)
+{
+  targetData = data;
+}
+
+void
+ACar::HandleDeadReckoning()
+{
+  FVector targetVelocity(targetData.velocityXY[0], targetData.velocityXY[1], 0.0f);
+  FQuat targetRotation = FQuat(GetActorUpVector(), targetData.rotationAngleZ);
+  
+  velocity = FMath::Lerp(velocity, targetVelocity, 0.1);
+  //FQuat::Slerp( GetActorRotation().)
+  isBreaking = targetData.isBreaking;
+  isThrottling = targetData.isThrottling;
+  
 }
