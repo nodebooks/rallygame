@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include <stack>
 #include "Car.generated.h"
 
 USTRUCT()
@@ -79,17 +80,10 @@ public:
   bool isThrottling;
 
   bool isBreaking;
-  
-  bool isOnDirt;
-  
-  UPROPERTY(EditAnywhere,BlueprintReadWrite)
-  float levelMinX;
-  UPROPERTY(EditAnywhere,BlueprintReadWrite)
-  float levelMaxX;
-  UPROPERTY(EditAnywhere,BlueprintReadWrite)
-  float levelMinY;
-  UPROPERTY(EditAnywhere,BlueprintReadWrite)
-  float levelMaxY;
+  /// Dirt effect can be active from overlapping sources. 
+  /// using stacked on-dirt tracking ensures effect is canceled 
+  /// only when player clears all areas.
+  std::stack<bool> dirtStack;
   
 	UFUNCTION(BlueprintCallable)
   void Accelerate(float AxisValue);
@@ -103,4 +97,12 @@ public:
   void OnNetworkSync( FNetworkData & data );
   
   void HandleDeadReckoning();
+  UFUNCTION(BlueprintCallable)
+  void SetOnDirt();
+  UFUNCTION(BlueprintCallable)
+  void SetOffDirt();
+  
+  
+  UFUNCTION(BlueprintCallable)
+  void HandleTerrainBlockHit();
 };

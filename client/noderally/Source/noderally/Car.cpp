@@ -3,7 +3,6 @@
 
 #include "Car.h"
 
-
 // Sets default values
 ACar::ACar()
 {
@@ -14,18 +13,22 @@ ACar::ACar()
   MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
   MeshComponent->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
   
-  levelMinX = 150.0f;
-  levelMaxX = 1920.0f;
-  levelMinY = 150.0f;
-  levelMaxY = 1180.0f;
+  // reasonable default values
+  maxThrottle = 10.0;
+  maxSpeed = 15.0;
+  maxTurningSpeed = 100.0;
+  breakFactor = 2.0;
+  slowDownFactor = 1.0;
+  maxSpeedOnDirt = 1.5;
+  dirtFactor = 3.0;
+  
 }
 
 // Called when the game starts or when spawned
 void ACar::BeginPlay()
 {
 	Super::BeginPlay();
-  isOnDirt = false;
-  
+  dirtStack = std::stack<bool>();
 }
 
 // Called every frame
@@ -52,11 +55,11 @@ void ACar::Tick(float DeltaTime)
   }
   
   // put cap to how fast car moves off-track
-  if ( isOnDirt )
+  if ( dirtStack.empty() == false )
   {
-    if ( velocity.SizeSquared() > 0.0f ) {
-	
-      FVector dirtSlowDown = (velocity * (dirtFactor / velocity.SizeSquared()) * DeltaTime);
+    if ( velocity.SizeSquared() > maxSpeedOnDirt*maxSpeedOnDirt ) {
+      
+      FVector dirtSlowDown = (velocity * dirtFactor * DeltaTime);
       if (dirtSlowDown.SizeSquared() > velocity.SizeSquared())
         velocity = velocity.GetClampedToMaxSize(maxSpeedOnDirt);
       else
@@ -70,10 +73,7 @@ void ACar::Tick(float DeltaTime)
   velocity = fwdVelocity + (lateralVelocity * drift);
   FVector newLocation = GetActorLocation();
   newLocation += velocity;
-  // check level limits 
-  newLocation.X = FMath::Clamp(newLocation.X, levelMinX, levelMaxX);
-  newLocation.Y = FMath::Clamp(newLocation.Y, levelMinY, levelMaxY);
-   
+     
   SetActorLocation(newLocation);
   
   FRotator rot = GetActorRotation();
@@ -82,7 +82,6 @@ void ACar::Tick(float DeltaTime)
   // decrease velocity
   velocity -= velocity * slowDownFactor * DeltaTime;
  
-  
 }
 
 // Called to bind functionality to input
@@ -97,12 +96,14 @@ ACar::Accelerate(float AxisValue)
 {
   
   isThrottling = AxisValue > 0.001f;
+  
+  throttle = AxisValue*maxThrottle;
 }
 
 void
 ACar::Deaccelerate(float AxisValue)
 {
-  isBreaking = ( AxisValue > 0.001f );
+  isBreaking = ( AxisValue > 0.001f ); 
 }
 
 void
@@ -128,4 +129,26 @@ ACar::HandleDeadReckoning()
   isBreaking = targetData.isBreaking;
   isThrottling = targetData.isThrottling;
   
+}
+void ACar::SetOnDirt()
+{
+  dirtStack.push(true);
+  isThrottling = false;
+}
+void ACar::SetOffDirt()
+{
+  if ( !dirtStack.empty())
+    dirtStack.pop();
+}
+
+void ACar::HandleTerrainBlockHit()
+{
+    isThrottling = false;
+    isBreaking = false;
+    
+    velocity=-velocity.GetUnsafeNormal();
+    
+    FVector newLocation = GetActorLocation();
+    newLocation+=velocity;
+    SetActorLocation(newLocation);
 }
