@@ -375,8 +375,9 @@ ANoderallyGameMode::RegenerateTrack( TSharedPtr<FJsonObject> track )
           comp->SetTile(x,y,1,info);	  
         }
       }
-      else if ( layerName == "Colliders")
+      else if ( layerName == "Colliders" || layerName == "Blockers")
       {
+          
           TArray <TSharedPtr<FJsonValue>> colliders = layer->AsObject()->GetArrayField("objects");
           for(auto & collider : colliders)
           {
@@ -391,14 +392,14 @@ ANoderallyGameMode::RegenerateTrack( TSharedPtr<FJsonObject> track )
               FActorSpawnParameters spawnParams;
               
               
-              
-              AActor *offtrack = GetWorld()->SpawnActor(FNoderallyBlueprintTypes::TerrainOffTrack, 
+              bool isBlock = layerName == "Blockers";
+              AActor *offtrack = GetWorld()->SpawnActor( (isBlock ? FNoderallyBlueprintTypes::TerrainBlock : FNoderallyBlueprintTypes::TerrainOffTrack), 
                                                         &FTransform::Identity, 
                                                         spawnParams);
               
               UBoxComponent *box = offtrack->FindComponentByClass<UBoxComponent>();
               // Extent is defined to be the half of the size
-              box->SetBoxExtent(FVector(tmpWidth*0.5,tmpHeight*0.5, 1.0));
+              box->SetBoxExtent(FVector(tmpWidth*0.5,tmpHeight*0.5, 10.0));
               // Take into account origin in actor; in Tiled it is top left corner
               // instead of center as in UE4.
               offtrack->SetActorLocation(FVector(tmpX+tmpWidth*0.5,tmpY+tmpHeight*0.5,0.0));
@@ -427,6 +428,7 @@ ANoderallyGameMode::RegenerateTrack( TSharedPtr<FJsonObject> track )
               
           }
       }
+      
     }
     
     
@@ -503,6 +505,7 @@ ANoderallyGameMode::StartMatch()
       FString playerTag = FString::Printf(TEXT("player%d"),count);
       
       tags.Add(FName(*playerTag));
+      tags.Add(FName(TEXT("Player")));
       
     }
     return hasMatchStarted;
@@ -510,5 +513,5 @@ ANoderallyGameMode::StartMatch()
 
 void ANoderallyGameMode::SendNetworkSync()
 {
-  
+    
 }
