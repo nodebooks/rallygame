@@ -152,3 +152,8 @@ void ACar::HandleTerrainBlockHit()
     newLocation+=velocity;
     SetActorLocation(newLocation);
 }
+
+FNetworkData ACar::GetSyncData()
+{
+  return targetData;
+}

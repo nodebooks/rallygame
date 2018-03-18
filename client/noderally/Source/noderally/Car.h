@@ -95,6 +95,7 @@ public:
   void Turn( float AxisValue);
     
   void OnNetworkSync( FNetworkData & data );
+  FNetworkData GetSyncData();
   
   void HandleDeadReckoning();
   UFUNCTION(BlueprintCallable)
