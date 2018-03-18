@@ -17,6 +17,7 @@
 #include <PaperTileMapComponent.h>
 #include <Classes/Kismet/GameplayStatics.h>
 #include <NoderallyPlayerState.h>
+#include <NoderallyGameState.h>
 #include <ctime>
 
 using namespace std;
@@ -554,7 +555,8 @@ ANoderallyGameMode::StartMatch()
     }
     // instruct to call match start on game thread
     AsyncTask(ENamedThreads::GameThread, [this]() {
-        this->OnMatchStart();      
+        this->OnMatchStart();
+        Cast<ANoderallyGameState>(this->GetWorld()->GetGameState())->StartMatch();
     });
     // take care also player states as they happen to 
     AsyncTask(ENamedThreads::GameThread, [this](){
