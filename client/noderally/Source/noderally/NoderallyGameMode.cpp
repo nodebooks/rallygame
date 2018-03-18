@@ -22,6 +22,7 @@ using namespace std;
 
 UClass * FNoderallyBlueprintTypes::TerrainBlock = nullptr;
 UClass * FNoderallyBlueprintTypes::TerrainOffTrack = nullptr;
+UClass * FNoderallyBlueprintTypes::Checkpoint = nullptr;
 
 FNoderallyBlueprintTypes::FNoderallyBlueprintTypes()
 {
@@ -30,7 +31,12 @@ FNoderallyBlueprintTypes::FNoderallyBlueprintTypes()
   
   static ConstructorHelpers::FObjectFinder<UBlueprint> terrainBlock(TEXT("Blueprint'/Game/Blueprints/TerrainBlock'"));
   if ( terrainBlock.Succeeded() ) TerrainBlock = terrainBlock.Object->GeneratedClass;
+
+  static ConstructorHelpers::FObjectFinder<UBlueprint> checkPoint(TEXT("Blueprint'/Game/Blueprints/Checkpoint'"));
+  if ( checkPoint.Succeeded() ) Checkpoint = checkPoint.Object->GeneratedClass;
+
 }
+
 
 ANoderallyGameMode::ANoderallyGameMode()
 {
@@ -433,6 +439,30 @@ ANoderallyGameMode::RegenerateTrack( TSharedPtr<FJsonObject> track )
               startPosition->SetActorRotation(FRotator(0.0, 180, 0.0), ETeleportType::None);
               startPosition->Tags.Add(FName(*tmpName));
               startPosition->Tags.Add(FName("START"));
+              
+          }
+      }
+      else if ( layerName == "Checkpoints")
+      {
+          TArray <TSharedPtr<FJsonValue>> checkpoints = layer->AsObject()->GetArrayField("objects");
+          
+          for(auto & checkpoint : checkpoints)
+          {
+              TSharedPtr<FJsonObject> obj = checkpoint->AsObject();
+              float tmpX = obj->GetNumberField("x");
+              float tmpY = obj->GetNumberField("y");
+              float tmpWidth = obj->GetNumberField("width");
+              FString tmpName = obj->GetStringField("name");
+              FActorSpawnParameters spawnParams;
+              
+              
+              AActor *checkPointActor = GetWorld()->SpawnActor<FNoderallyBlueprintTypes::Checkpoint >(spawnParams);
+              USphereComponent *sphere = checkPointActor->FindComponentByClass<USphereComponent>();
+              sphere->SetSphereRadius(tmpWidth, true);
+              
+              checkPointActor->SetActorLocation(FVector(tmpX+tmpWidth*0.5,tmpY+tmpWidth*0.5,0.0));
+              checkPointActor->Tags.Add(FName(*tmpName));
+              
               
           }
       }

@@ -38,7 +38,7 @@ struct FNoderallyBlueprintTypes
   
   static UClass * TerrainOffTrack;
   static UClass * TerrainBlock;
-  
+  static UClass * Checkpoint;
   FNoderallyBlueprintTypes();
   
 };
