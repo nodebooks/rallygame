@@ -16,6 +16,7 @@
 #include <PaperTileSet.h>
 #include <PaperTileMapComponent.h>
 #include <Classes/Kismet/GameplayStatics.h>
+#include <NoderallyPlayerState.h>
 #include <ctime>
 
 using namespace std;
@@ -24,6 +25,7 @@ using namespace std;
 UClass * FNoderallyBlueprintTypes::TerrainBlock = nullptr;
 UClass * FNoderallyBlueprintTypes::TerrainOffTrack = nullptr;
 UClass * FNoderallyBlueprintTypes::Checkpoint = nullptr;
+
 
 FNoderallyBlueprintTypes::FNoderallyBlueprintTypes()
 {
@@ -36,6 +38,7 @@ FNoderallyBlueprintTypes::FNoderallyBlueprintTypes()
   static ConstructorHelpers::FObjectFinder<UBlueprint> checkPoint(TEXT("Blueprint'/Game/Blueprints/Checkpoint'"));
   if ( checkPoint.Succeeded() ) Checkpoint = checkPoint.Object->GeneratedClass;
 
+  
 }
 
 
@@ -552,9 +555,15 @@ ANoderallyGameMode::StartMatch()
     // instruct to call match start on game thread
     AsyncTask(ENamedThreads::GameThread, [this]() {
         this->OnMatchStart();      
-      });
-    
-    
+    });
+    // take care also player states as they happen to 
+    AsyncTask(ENamedThreads::GameThread, [this](){
+      for(APlayerState * ps :  this->GetWorld()->GetGameState()->PlayerArray )
+      {
+          auto playerState = Cast<ANoderallyPlayerState>(ps);
+          playerState->OnMatchStart();
+      }
+    });
     return hasMatchStarted;
 }
 
