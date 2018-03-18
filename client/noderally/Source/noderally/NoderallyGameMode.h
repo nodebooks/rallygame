@@ -115,6 +115,12 @@ public:
   UFUNCTION(BlueprintCallable)
   bool LoadTrack();
   
+  UFUNCTION(BlueprintNativeEvent)
+  void OnMatchStart();
+  
+  UFUNCTION(BlueprintNativeEvent)
+  void OnMatchEnd();
+  
   //virtual void StartPlay() override;
   virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
   
@@ -123,7 +129,7 @@ public:
   bool StartMatch();
   
   
-  void SendNetworkSync();
+
   /// \TODO
   /* On Match Start / HandleMatchStart should call RestartPlayer(player controller);.*/
   /* match state must be set and handling callback executed in game mode.*/

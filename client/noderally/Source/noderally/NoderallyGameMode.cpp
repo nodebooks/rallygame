@@ -15,6 +15,8 @@
 #include <PaperTileSet.h>
 #include <PaperTileMapComponent.h>
 #include <Classes/Kismet/GameplayStatics.h>
+#include <ctime>
+
 using namespace std;
 
 
@@ -200,7 +202,7 @@ void ANoderallyGameMode::NewPlayer( const FPlayerAuth& playerAuth)
 void ANoderallyGameMode::SendRaceUpdate( const FPlayerAuth & playerAuth )
 {
     TSharedRef<FJsonObject> json = MakeShareable(new FJsonObject());
-    TSharedRef<FJsonObject> location = MakeShareable(new FJsonObject());
+    TSharedRef<FJsonObject> transform = MakeShareable(new FJsonObject());
     TSharedRef<FJsonObject> velocity = MakeShareable(new FJsonObject());
     
     
@@ -210,15 +212,21 @@ void ANoderallyGameMode::SendRaceUpdate( const FPlayerAuth & playerAuth )
     FVector pos = car->GetActorLocation();
     FVector vel = car->GetVelocity();
     
-    location->SetNumberField("x", pos.X);
-    location->SetNumberField("y", pos.Y);
+    transform->SetNumberField("x", pos.X);
+    transform->SetNumberField("y", pos.Y);
+    transform->SetNumberField("r", car->GetActorRotation().Yaw);
+    
     velocity->SetNumberField("x", vel.X);
     velocity->SetNumberField("y", vel.Y);
     
     json->SetStringField("username", playerAuth.username);
     
-    json->SetObjectField("location", location);
+    json->SetObjectField("transform", transform);
     json->SetObjectField("velocity", velocity);
+    // quick and dirty solution; does not quarantee sync with server 
+    // clock this way. 
+    std::time_t t = std::time(nullptr);
+    json->SetNumberField("ts", t);
     
     SendWithWebsocket(json);
 }
@@ -508,10 +516,24 @@ ANoderallyGameMode::StartMatch()
       tags.Add(FName(TEXT("Player")));
       
     }
+    // instruct to call match start on game thread
+    AsyncTask(ENamedThreads::GameThread, [this]() {
+        this->OnMatchStart();      
+      });
+    
+    
     return hasMatchStarted;
 }
 
-void ANoderallyGameMode::SendNetworkSync()
+void
+ANoderallyGameMode::OnMatchEnd_Implementation()
+{
+  
+}
+
+void
+ANoderallyGameMode::OnMatchStart_Implementation()
 {
     
 }
+
