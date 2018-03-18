@@ -6,6 +6,7 @@
 #include <Public/EngineUtils.h>
 #include <UObject/ConstructorHelpers.h>
 #include <Classes/Components/BoxComponent.h>
+#include <Classes/Components/SphereComponent.h>
 #include <Classes/Engine/TargetPoint.h>
 #include <Car.h>
 #include <Classes/GameFramework/GameStateBase.h>
@@ -445,7 +446,7 @@ ANoderallyGameMode::RegenerateTrack( TSharedPtr<FJsonObject> track )
       else if ( layerName == "Checkpoints")
       {
           TArray <TSharedPtr<FJsonValue>> checkpoints = layer->AsObject()->GetArrayField("objects");
-          
+          int count=0;
           for(auto & checkpoint : checkpoints)
           {
               TSharedPtr<FJsonObject> obj = checkpoint->AsObject();
@@ -454,14 +455,16 @@ ANoderallyGameMode::RegenerateTrack( TSharedPtr<FJsonObject> track )
               float tmpWidth = obj->GetNumberField("width");
               FString tmpName = obj->GetStringField("name");
               FActorSpawnParameters spawnParams;
-              
-              
-              AActor *checkPointActor = GetWorld()->SpawnActor<FNoderallyBlueprintTypes::Checkpoint >(spawnParams);
+                            
+              AActor *checkPointActor = GetWorld()->SpawnActor( FNoderallyBlueprintTypes::Checkpoint, 
+                                                                &FTransform::Identity, 
+                                                                spawnParams);
               USphereComponent *sphere = checkPointActor->FindComponentByClass<USphereComponent>();
               sphere->SetSphereRadius(tmpWidth, true);
               
               checkPointActor->SetActorLocation(FVector(tmpX+tmpWidth*0.5,tmpY+tmpWidth*0.5,0.0));
-              checkPointActor->Tags.Add(FName(*tmpName));
+              FString checkPointTag = FString::Printf(TEXT("Checkpoint%d"),count++);
+              checkPointActor->Tags.Add(FName(*checkPointTag));
               
               
           }
