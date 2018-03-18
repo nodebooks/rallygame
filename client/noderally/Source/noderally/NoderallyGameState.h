@@ -15,7 +15,17 @@ class NODERALLY_API ANoderallyGameState : public AGameStateBase
 	GENERATED_BODY()
 public:
   //virtual void HandleBeginPlay() override;
-
+  
+  // player order on track during match. 
+  // (if more checkpoints are used, this provides tools to 
+  // track it easily in real-time).
+  
+  // number of laps on current track
+  
+  // name of the current track
+    
+  // All-time top 10 players. 
+  
 	
 	bool HasMatchStarted() const override;
   UFUNCTION(BlueprintCallable)
