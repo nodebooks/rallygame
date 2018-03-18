@@ -14,17 +14,15 @@ ANoderallyGameState::HandleBeginPlay()
 bool
 ANoderallyGameState::HasMatchStarted() const
 {
-   UE_LOG(LogTemp, Warning, TEXT("Match Start Query"));
-   return true;
-}
- 
-bool 
-ANoderallyGameState::StartMatch()
-{
-  
-  GetWorldSettings()->NotifyMatchStarted();
-  
+  UE_LOG(LogTemp, Warning, TEXT("Match Start Query"));
   return true;
 }
 
+bool
+ANoderallyGameState::StartMatch()
+{
 
+  GetWorldSettings()->NotifyMatchStarted();
+  numLaps = 3;
+  return true;
+}
